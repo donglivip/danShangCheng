@@ -1,0 +1,256 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+		<script type="text/javascript" src="../js/jquery.min.js"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+		<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/rem.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" href="shouye.css" />
+	</head>
+	<style type="text/css">
+		.swiper-slide{width: 6.7rem;margin: 0 .25rem;border-radius: .12rem;}
+	</style>
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav">
+				<div class="mui-input-row">
+					<!--<input id="test" type="text" placeholder="请输入商品关键词" style="color: #666666;">-->
+					<!--<div id="searchdl" @click="search">
+						GO
+					</div>-->
+					首页
+				</div>
+			</header>
+			<div class="mui-content">
+				<div id="slider" class="mui-slider" v-if="slideimg">
+					<div class="swiper-container02 swiper-container-horizontal">
+						<div class="swiper-wrapper">
+							<div class="swiper-slide" v-for="(item,index) in slideimg" v-show="index<5" @click="openDetail(item.goodsId)">
+								<!--<img :src="item.imgAddress | imgUrl">-->
+									<img src="../wode/default.jpg"/>
+							</div>
+						</div>
+						<div class="swiper-pagination"></div>
+					</div>
+				</div>
+				<div class="mui-content">
+					<div class="toptitle">
+						分类
+					</div>
+					<div class="hong-men">
+						<ul class="mui-table-view mui-grid-view mui-grid-9">
+							<li class="mui-table-view-cell mui-media mui-col-sm-3" v-for="(val,index) in navitem" v-show="index<7" @click="openList(val.id)">
+								<img :src="val.imgAddress | imgUrl" style="width: 55px;height: 55px;border-radius: 50%;" />
+								<div class="mui-media-body">
+									{{val.name}}
+								</div>
+							</li>
+							<li class="mui-table-view-cell mui-media mui-col-sm-3" @click="openMore" v-show="navitem.length>7">
+								<span class="mui-icon"></span>
+								<div class="mui-media-body">
+									更多
+								</div>
+							</li>
+						</ul>
+					</div>
+					<!--<div class="class_piank">
+						<div class="list">
+							<div class="itml_div" v-for="(val,index) in shopAll" v-show="index<11" @click="openDetail(val.id)">
+								<div class="itml_div_l">
+									<img :src="val.imgAddress | imgUrl" />
+								</div>
+								<div class="h4">
+									<span>
+											{{val.name}}
+										</span>
+								</div>
+								<div class="jiage">
+									<p>￥{{val.price}}<span style="float: right;"><span>{{val.sellGoodsNum}}</span>人购买</span>
+									</p>
+								</div>
+								<div style="clear: both;"></div>
+							</div>
+						</div>
+					</div>-->
+					<nav class="dl-bar">
+						<div class="dlitem">
+							<span class="mui-icon">
+								<img src="../img/index-active.png"/>
+							</span>
+							<span class="dllabel active">首页</span>
+						</div>
+						<div class="dlitem" @click="openguo">
+							<span class="mui-icon">
+								<img src="../img/xinwen.png"/>
+							</span>
+							<span class="dllabel">新闻</span>
+						</div>
+						<div class="dlitem" @click="">
+							<span class="mui-icon">
+								<img src="../img/shangpin-2.png"/>
+							</span>
+							<span class="dllabel">商品</span>
+						</div>
+						<div class="dlitem" @click="openwo()">
+							<span class="mui-icon">
+								<img src="../img/ziyuan copy.png"/>
+							</span>
+							<span class="dllabel">我的</span>
+						</div>
+					</nav>
+					<script type="text/javascript">
+						localStorage.setItem('myurl', 'http://192.168.2.105:8080/Shoppings')
+						localStorage.setItem('myurlimg', 'http://192.168.2.105:8080/')
+						var myurl = localStorage.getItem('myurl')
+						var myvue = new Vue({
+							el: '#app',
+							data: {
+								slideimg: [],
+								navitem: [],
+								moreboo: true,
+								shopAll: []
+							},
+							methods: {
+								search: function() {
+									var val = $('#test').val()
+									localStorage.setItem('searchval', val)
+									mui.openWindow({
+										url: '../shangpin/shangpin002.html',
+										id: 'shangpin'
+									})
+								},
+								openguo: function() {
+									if(localStorage.getItem('userid') != null) {
+										mui.openWindow({
+											url: '../gouwuche/gouwuche.html',
+											id: 'gouwuche'
+										})
+									} else {
+										mui.openWindow({
+											url: '../login/login.html',
+											id: 'login'
+										})
+									}
+								},
+								openwo: function() {
+									if(localStorage.getItem('userid') != null) {
+										mui.openWindow({
+											url: '../wode/wode.html',
+											id: 'wode'
+										})
+									} else {
+										mui.openWindow({
+											url: '../login/login.html',
+											id: 'login'
+										})
+									}
+								},
+								toqq: function() {
+									mui.openWindow({
+										url: '../xiangqing/qq.html',
+										id: 'qq'
+									})
+								},
+								openList: function(id) {
+									mui.openWindow({
+										url: '../fenlei/fenlei.html',
+										id: 'fenlei'
+									})
+									localStorage.setItem('in-nav-id', id)
+								},
+								openMore: function() {
+									mui.openWindow({
+										url: 'listAll.html',
+										id: 'listAll'
+									})
+								},
+								openDetail: function(id) {
+									localStorage.setItem('index-detail', id)
+									mui.openWindow({
+										url: '../xiangqing/xiangqing002.html'
+									})
+								}
+							},
+							created: function() {
+								function plusReady() {
+									// 弹出系统等待对话框  
+									plus.nativeUI.showWaiting("加载中...");
+								}
+								if(window.plus) {
+									plusReady();
+								} else {
+									document.addEventListener("plusready", plusReady, false);
+								}
+							},
+							mounted: function() {
+								var mySwiper = new Swiper('.swiper-container02', {
+									 slidesPerView: 3,
+								      spaceBetween: 30,
+								      pagination: {
+								        el: '.swiper-pagination',
+								        clickable: true,
+								      }
+								})
+								var that = this
+								$.ajax({
+									type: "post",
+									url: myurl + "/queryLBItmage",
+									dataType: 'json',
+									async: true,
+									success: function(res) {
+										that.slideimg = res.data
+									}
+								})
+								$.ajax({
+									type: "post",
+									url: myurl + "/queryGoodsSortOne",
+									dataType: 'json',
+									async: true,
+									success: function(res) {
+										that.navitem = res.data
+									}
+								})
+								$.ajax({
+									type: "post",
+									url: myurl + "/queryAll",
+									dataType: 'json',
+									async: true,
+									success: function(res) {
+										that.shopAll = res.data
+
+										function plusReady() {
+											plus.nativeUI.closeWaiting();
+										}
+										if(window.plus) {
+											plusReady();
+										} else {
+											document.addEventListener("plusready", plusReady, false);
+										}
+									}
+								})
+
+							},
+							filters: {
+								imgUrl: function(value) {
+									return localStorage.getItem('myurlimg') + value
+								}
+							},
+							updated: function() {
+								$('.itml_div_l img').height($('.itml_div_l img').width())
+							}
+						})
+					</script>
+				</div>
+	</body>
+
+</html>

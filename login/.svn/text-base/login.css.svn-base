@@ -1,0 +1,154 @@
+.conmon a ,.conmon h1{
+	/*合并修改颜色*/
+	color: #FFFFFF;
+}
+.beijingse{
+	background-color: #FFFFFF;
+}
+.long-div{
+	margin-top: 30%;
+	/*调整输入上下左右边距*/
+	padding: 0px 25px 0px 15px;
+	/*border: 1px solid #FF0000;*/
+}
+
+.mui-input-group:before ,.mui-input-group:after{
+	height:0px;
+}
+.mui-icon{
+	color: #4321CC;
+}
+.mui-input-group .mui-input-row:after{
+	    background-color: #4321CC;
+}
+.login-buttom{
+	/*第一个px是距离顶部边距 第二个px是左右边距*/
+	margin: 30px 0px;
+	/*调整按钮剧中*/
+	text-align: center;
+	
+}
+.login-buttom button{
+	/*调整按钮左边间距*/
+	margin-left: 10px;
+	/*调整按钮宽度*/
+	width: 96%;
+}
+
+.buttom-t{
+	/*按钮背景色*/
+	background: #007AFF;
+	/*文字颜色*/
+	color: #FFFFFF;
+	/*去掉边框线条*/
+	border: 0px;
+	/*内边距第一个px是上下 第二个是左右*/
+	padding: 10px 0px;
+}
+
+.longin-a{
+	/*background-color: red;*/
+	text-align: center;
+}
+.longin-a a{
+	/*给文字颜色*/
+	color: #999999;
+	/*设置文字边距*/
+	margin: 0px 10px;
+	/*设置文字大小*/
+	font-size: 18px;
+}
+
+
+.longin-a{
+	margin-top: 25px;
+}
+
+#button{
+	background: #FB1647;
+}
+
+
+.weixinll {
+	/*border: 1px solid red;*/
+	text-align: center;
+	color: #999999;
+	font-size: 12px;
+}
+
+
+.xieyi{
+	color: #FF0000!important;
+}
+
+
+
+
+/*公共目录*/
+/*导航顶部统一颜色*/
+
+#nav_bg{
+	background: #FB1647;
+	
+}
+
+.nav_bg{
+	color: #FFFFFF;
+}
+
+
+
+#nav_bg a,#nav_bg h1{
+	color: #FFFFFF;
+}
+
+.button{
+	margin-top: 25px;
+	text-align: center;
+	
+}
+
+.button button{
+	
+	width: 80%;
+	height: 45px;
+}
+
+/*分类目文字颜色*/
+.mui-bar .mui-btn-link{
+	color: #FFFFFF;
+}
+
+.mui-bar .mui-btn-nav.mui-pull-right {
+    margin-right: -5px;
+    font-size: 25px;
+}
+
+.mui-table-view{
+	margin-top: 0px!important;
+}
+
+
+/*验证码样式*/
+.yzma-btn{
+	/*绝对定位*/
+	position: absolute;
+	/*定位到右边*/
+	right: 0px;
+	/*距离顶部距离*/
+	top: 0px;
+	/*给验证码里面的文字加色*/
+	color: #999;
+	/*调整验证码的内部边距*/
+	padding: 3px 10px;
+	
+	
+}
+
+.yzma-btn button{
+	width: 100%;
+	background: #FB1647;
+	color: #FFFFFF;
+	border: 0px;
+	font-size: 12px;
+}

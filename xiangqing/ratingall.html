@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="xiangqing.css" />
+		<link rel="stylesheet" href="../shouye/iconfont.css" />
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	</head>
+
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title">商品评价</h1>
+				<div class="mui-pull-right mui-icon mui-icon-upload" @click="share"></div>
+			</header>
+			<div class="mui-content">
+				<!--商品详情-->
+				<div class="xingqing_b">
+					<!--商品评价-->
+					<div class="ratings">
+						<div v-show="ratingsdata.length==0" style="text-align: center;padding-top: 5px;">
+							暂无评价信息
+						</div>
+						<div class="ratings-list" v-for="val in ratingsdata" v-show="ratingsdata.length>0">
+							<div class="ratings-top">
+								<img :src="val.headimg | imgUrl" />
+								<div class="ratings-name">
+									{{val.name}}
+								</div>
+								<div class="ratings-time">
+									{{val.createTime}}
+								</div>
+							</div>
+							<div class="ratings-main">
+								<p>
+									{{val.goodsViewContent}}
+								</p>
+								<div class="img-group">
+									<div class="img-wrap" v-show="val.goodsImge1!=''">
+										<img :src="val.goodsImge1 | imgUrl" />
+									</div>
+									<div class="img-wrap" v-show="val.goodsImge2!=''">
+										<img :src="val.goodsImge2 | imgUrl" />
+									</div>
+									<div class="img-wrap" v-show="val.goodsImge3!=''">
+										<img :src="val.goodsImge3 | imgUrl" />
+									</div>
+									<div class="img-wrap" v-show="val.goodsImge4!=''">
+										<img :src="val.goodsImge4 | imgUrl" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var myUrl = localStorage.getItem('myurl')
+			var shopid = localStorage.getItem('index-detail')
+			var vip = localStorage.getItem('vipgrade')
+			var myvue = new Vue({
+				el: '#app',
+				data: {
+					shopData: [],
+					colornav: -1,
+					color: '',
+					iscollect: 0,
+					collectid: '',
+					layuis: false,
+					joinname: '未知用户',
+					tab: true,
+					joinid: '',
+					adreess: [],
+					adreessDf: [],
+					freight: 0,
+					groupByPrice: 0,
+					joinboo: false,
+					ratingsdata: []
+				},
+				methods: {
+					share: function() {
+						mui.openWindow({
+							url: 'index.html',
+							id: 'index'
+						})
+					},
+					myajax: function() {
+						var that = this
+						$.ajax({
+							type: "post",
+							url: myUrl + "/queryGoodsByIds",
+							async: true,
+							data: {
+								goodsUser: shopid,
+								shoppingUserId: localStorage.getItem('userid')
+							},
+							dataType: 'json',
+							success: function(res) {
+								that.shopData = res.data
+								that.iscollect = res.data[3]
+								if(res.data.length > 5) {
+									that.groupByPrice = res.data[5].groupByPrice
+									that.ratingsdata = res.data[4]
+									if(res.data[5].length == 0) {
+										that.joinboo = true
+									}
+								} else {
+									that.groupByPrice = 0
+								}
+								localStorage.setItem('discount', res.data[2].rebate)
+							}
+						});
+						$.ajax({
+							type: "post",
+							url: myUrl + "/queryShoppingCartPojo",
+							async: true,
+							dataType: 'json',
+							data: {
+								shoppingUserId: localStorage.getItem('userid')
+							},
+							success: function(res) {
+								that.adreessDf = res.data[3]
+								that.adreess = res.data[2]
+							}
+						});
+					}
+				},
+				mounted: function() {
+					this.myajax()
+				},
+				filters: {
+					imgUrl: function(value) {
+						return localStorage.getItem('myurlimg') + value
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

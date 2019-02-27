@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.js"></script>
+		<link rel="stylesheet" href="wode.css" />
+		<link rel="stylesheet" href="iconfont.css" />
+		<script src="../js/rem.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<div class="mui-content" id="app">
+			<div class="div_img">
+				<div v-if="logintype=='zc'" class="div_img02">
+					<img class="info" id="img" :src="userimg | imgUrl" v-if="userimg!=null" />
+					<img src="default.jpg" v-if="userimg==null" /> {{username}}
+				</div>
+				<!--<img :src="wximg" v-if="logintype=='wx'"/>
+				<h4 class="info" id="h4"></h4>
+				<h4 class="info" id="h4">{{userdata.menberLevel}}</h4>
+				<h3 class="inf" v-show="userdata.endDate!=undefined">会员到期时间：<span style="color: red;">{{userdata.endDate}}</span></h3>-->
+			</div>
+			<div class="div_ul">
+					<div class="group">
+						<div class="goup-top">
+							<span class="titile">
+								我的订单
+							</span>
+							<span>
+								查看全部订单
+							</span>
+							<img src="../img/Arrow_simple_rightt Copy 3@2x.png"/>
+						</div>
+						<div class="group-inner">
+							<div class="group-item">
+								<img src="../img/user01.png"/>
+								<span>
+									待付款
+								</span>
+							</div>
+							<div class="group-item">
+								<img src="../img/user02.png"/>
+								<span>
+									待发货
+								</span>
+							</div>
+							<div class="group-item">
+								<img src="../img/user03.png"/>
+								<span>
+									待收货
+								</span>
+							</div>
+							<div class="group-item">
+								<img src="../img/user04.png"/>
+								<span>
+									评价
+								</span>
+							</div>
+							<div class="group-item">
+								<img src="../img/user05.png"/>
+								<span>
+									退货退款
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="group">
+						<div class="goup-top">
+							<span class="titile">
+								公司简介
+							</span>
+						</div>
+			            <div class="goup-top">
+							<span class="titile">
+								客服电话
+							</span>
+							<span>
+								0023-23232
+							</span>
+						</div>
+						<div class="goup-top" style="border: 0;">
+							<span class="titile">
+								微信号
+							</span>
+							<span>
+								dioa13243214
+							</span>
+						</div>
+					</div>
+					<!--			        
+			          <li class="mui-table-view-cell">
+			          	<img src="../img/vip.png"/>
+			            <span class="mui-navigate-right">
+			               会员充值
+			            </span>
+			        </li>-->
+					<!--<li class="mui-table-view-cell">
+			         	<img src="../img/collect.png"/>
+			            <span class="mui-navigate-right">
+			               我的收藏
+			            </span>
+			        </li>-->
+					<!--<li class="mui-table-view-cell">
+						<img src="../img/goods.png" />
+						<span class="mui-navigate-right">
+			              	 收货地址
+			            </span>
+					</li>-->
+					<!--<li class="mui-table-view-cell">
+			        	<img src="../img/delivery.png"/>
+			            <span class="mui-navigate-right">
+			            	 代发货地址
+			            </span>
+			        </li>-->
+					
+					<!--<li class="mui-table-view-cell">
+			         	<img src="../img/password.png"/>
+			            <span class="mui-navigate-right">
+			               	修改密码
+			            </span>
+			       </li>-->
+				<!--<div class="nologin" @click="nologin">
+			    	退出登录
+			    </div>-->
+			</div>
+			<nav class="dl-bar">
+				<div class="dlitem">
+					<span class="mui-icon">
+							<img src="../img/shouye-2.png"/>
+							</span>
+					<span class="dllabel">首页</span>
+				</div>
+				<div class="dlitem" @click="openguo">
+					<span class="mui-icon">
+								<img src="../img/xinwen.png"/>
+							</span>
+					<span class="dllabel">新闻</span>
+				</div>
+				<div class="dlitem" @click="">
+					<span class="mui-icon">
+								<img src="../img/shangpin-2.png"/>
+							</span>
+					<span class="dllabel">商品</span>
+				</div>
+				<div class="dlitem" @click="openwo()">
+					<span class="mui-icon">
+								<img src="../img/ziyuan copy 2.png"/>
+							</span>
+					<span class="dllabel  active">我的</span>
+				</div>
+			</nav>
+		</div>
+		<script type="text/javascript" src="../js/dui.js"></script>
+
+		<script type="text/javascript">
+			var myurl = localStorage.getItem('myurl')
+			var myvue = new Vue({
+				el: '#app',
+				data: {
+					userdata: [],
+					userimg: localStorage.getItem('userimg'),
+					username: localStorage.getItem('username'),
+					logintype: localStorage.getItem('type'),
+					wximg: localStorage.getItem('wximg')
+				},
+				mounted: function() {
+					var that = this
+					$.ajax({
+						type: "post",
+						url: myurl + "/queryMemberUserByShoppingUserId",
+						data: {
+							shoppingUserId: localStorage.getItem('userid')
+						},
+						dataType: 'json',
+						success: function(res) {
+							that.userdata = res.data
+							localStorage.setItem('vipgrade', res.data.menberLevel)
+						}
+					});
+				},
+				filters: {
+					imgUrl: function(value) {
+						return localStorage.getItem('myurlimg') + value
+					}
+				},
+				methods: {
+					nologin: function() {
+						localStorage.clear()
+						mui.openWindow({
+							url: '../shouye/shouye.html',
+							id: 'shouye'
+						})
+					}
+				}
+			})
+		</script>
+		<script type="text/javascript" src="wode.js"></script>
+	</body>
+
+</html>

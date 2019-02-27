@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>用户信息</title>
+		<link rel="stylesheet" type="text/css" href="../css/mui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../info/info.css" />
+		<script src="../info/rem.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="http://malsup.github.io/jquery.form.js"></script>
+	</head>
+	<style type="text/css">
+		.myhidden {
+			height: 1rem;
+			position: relative;
+			width: 1rem;
+		}
+		
+		.input-text {
+			position: relative;
+		}
+		
+		.input-text input {
+			left: 0!important;
+			height: 100%!important;
+		}
+		
+		.hidden-wrap {
+			display: flex;
+		}
+		
+		.userinform img {
+			width: 1.5rem;
+			height: 1.5rem;
+			margin: 0 auto;
+			right: auto;
+		}
+	</style>
+
+	<body>
+		<form name="form1" enctype="multipart/form-data" action="" id="myform" method="post">
+			<div class="wrap inform">
+				<div class="topbar">
+					<div class="topbar-back mui-action-back ">
+						<span class="mui-icon mui-icon-arrowleft mui-action-back" style="display: flex;align-items: center;"></span>
+					</div>
+					<div class="topbar-text">
+						发表评价
+					</div>
+					<div class="topbar-next">
+						<input type="button" value="提交" id="mysub" />
+					</div>
+				</div>
+				<div class="content userinform">
+					<input type="hidden" name="orderId" id="orderid" value="" />
+					<input type="hidden" name="goodsId" id="goodsId" value="" />
+					<input type="hidden" name="shoppingUserId" id="shoppingUserId" value="" />
+					<input type="hidden" name="childId" id="childId" value="" />
+					<textarea name="goodsViewContent" rows="" cols="" placeholder="请输入评价内容"></textarea>
+					<div class="hidden-wrap">
+						<div class="input-text">
+							<input type="hidden" name="goodsImge1" id="hidden1" value="" />
+							<img id="pic1" src="photo.png" />
+						</div>
+						<div class="input-text">
+							<input type="hidden" name="goodsImge2" id="hidden2" value="" />
+							<img id="pic2" src="photo.png" />
+						</div>
+						<div class="input-text">
+							<input type="hidden" name="goodsImge3" id="hidden3" value="" />
+							<img id="pic3" src="photo.png" />
+						</div>
+						<div class="input-text">
+							<input type="hidden" name="goodsImge4" id="hidden4" value="" />
+							<img id="pic4" src="photo.png" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		<script type="text/javascript">
+			$(function() {
+				function plusReady() {
+					// 获取所有Webview窗口
+					plus.webview.close('wode')
+				}
+				if(window.plus) {
+					plusReady();
+				} else {
+					document.addEventListener('plusready', plusReady, false);
+				}
+				$('#orderid').val(localStorage.getItem('orderid'))
+				$('#goodsId').val(localStorage.getItem('goodsId'))
+				$('#shoppingUserId').val(localStorage.getItem('shoppingUserId'))
+				$('#childId').val(localStorage.getItem('childId'))
+				var myurl = localStorage.getItem('myurl')
+				$('#myform').attr('action', myurl + '/insertSelectiveByGoodsReview')
+				$('#mysub').click(function() {
+					$('form').ajaxSubmit({
+						type: 'post',
+						url: myurl + '/insertSelectiveByGoodsReview',
+						success: function(res) {
+							mui.openWindow({
+								url: '../shouye/shouye.html',
+								id: 'shouye'
+							})
+						},
+						error: function(res) {
+							console.log(res)
+							alert('提交失败,请稍后重试或联系客服!!')
+						}
+					})
+				})
+				$('form').on('click', 'img', function() {
+					localStorage.setItem('imgid', $(this).attr('id'))
+					localStorage.setItem('inputid', $(this).prev().attr('id'))
+					var btnArray = [{
+						title: "照相机"
+					}, {
+						title: "相册"
+					}]; //选择按钮  1 2 3
+					plus.nativeUI.actionSheet({
+							title: "请选择",
+							cancel: "取消", // 0
+							buttons: btnArray
+						},
+						function(e) {
+							var index = e.index; // 
+							switch(index) {
+								case 1:
+									//写自己的逻辑
+									camera();
+									break;
+								case 2:
+									album();
+									break;
+							}
+						});
+				})
+				//	相机上传
+				function camera() {
+					var cmr = plus.camera.getCamera();
+					cmr.captureImage(function(p) {
+						//成功
+						plus.io.resolveLocalFileSystemURL(p, function(entry) {
+							var img_name = entry.name; //获得图片名称
+							var img_path = entry.toLocalURL(); //获得图片路径
+							upload_img(img_path);
+							$("#" + localStorage.getItem('imgid') + "").attr('src', img_path);
+						}, function(e) {
+							alert("读取拍照文件错误：" + e.message);
+						});
+					}, function(e) {
+						console.log("失败：" + e.message);
+					}, {
+						filename: '_doc/camera/',
+						index: 1
+					});
+				}
+				//	相册上传
+				function album() {
+					plus.gallery.pick(function(path) {
+						upload_img(path);
+						$("#" + localStorage.getItem('imgid') + "").attr('src', path);
+					}, function(e) {
+						console.log("取消选择图片");
+					}, {
+						filter: "image"
+					});
+				}
+				//初始上传地址  
+				var server = localStorage.getItem('myurl') + "/uploadUserImage";
+				var files = []; //图片存放的数组 可以上传一个，或者多个图片 
+				//上传图片
+				function upload_img(p) {
+					var n = p.substr(p.lastIndexOf('/') + 1);
+					files.push({
+						name: "uploadkey",
+						path: p
+					});
+					//开始上传
+					start_upload();
+				}
+				//开始上传
+				function start_upload() {
+					if(files.length <= 0) {
+						plus.nativeUI.alert("没有添加上传文件！");
+						return;
+					}
+					//原生的转圈等待框
+					var wt = plus.nativeUI.showWaiting();
+					var task = plus.uploader.createUpload(server, {
+							method: "POST"
+						},
+						function(t, status) { //上传完成
+							if(status == 200) {
+								//资源
+								var responseText = t.responseText;
+								//转换成json
+								var json = eval('(' + responseText + ')');
+								//上传文件的信息
+								var files = json.data;
+
+								$("#" + localStorage.getItem('inputid') + "").val(files)
+								wt.close();
+							} else {
+								alert("上传失败：" + status);
+								//关闭原生的转圈等待框
+								wt.close();
+							}
+						});
+					task.addData("uid", getUid());
+					for(var i = 0; i < files.length; i++) {
+						var f = files[i];
+						task.addFile(f.path, {
+							key: f.name
+						});
+					}
+					task.start();
+				}
+				// 产生一个随机数
+				function getUid() {
+					return Math.floor(Math.random() * 100000000 + 10000000).toString();
+				}
+			})
+		</script>
+	</body>
+
+</html>

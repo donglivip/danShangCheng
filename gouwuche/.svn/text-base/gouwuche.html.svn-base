@@ -1,0 +1,481 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script type="text/javascript" src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="gouwuche.css" />
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav" id="nav_bg">
+				<a class="mui-icon mui-icon-left-nav mui-pull-left" @click="back"></a>
+				<h1 class="mui-title">购物车</h1>
+			</header>
+			<!--内容-->
+			<div class="mui-content">
+				<ul class="mui-table-view mui-table-view-chevron" id="list">
+					<li v-for='(val,index) in shop' class="mylist">
+						<!--样式-->
+						<div class="itml_div" :data-id="val.id" :data-para='val.parameters'>
+							<div class="itml_div_l">
+								<span class="myspan" @click.stop="tomoney(val,$event,index)"></span>
+								<img style="position: relative;" :src="val.imgAddress | imgUrl" />
+							</div>
+							<div class="itml_div_r">
+								<h3>{{val.name}}</h3>
+								<div class="class_pp">
+									<p>{{val.goodsColor}}</p>
+									<p>
+										<span v-show="val.isMail==1" style="margin-left: 10px;">包邮</span>
+										<span v-show="val.isMail==2" style="margin-left: 10px;">不包邮</span>
+									</p>
+								</div>
+								<div class="car">
+									<div id="car">
+										<div class="mui-numbox" data-numbox-step='1' data-numbox-min='0'>
+											<button class="mui-btn jian" type="button" @click="add($event,val.price,val.cartId,'0')">-</button>
+											<input class="mui-numbox-input" type="number" :value="val.number"/>
+											<button class="mui-btn jia" type="button" @click="add($event,val.price,val.cartId,'1')">+</button>
+										</div>
+									</div>
+									<div class="nowparent">￥<span class="nowmoney">{{val.price*val.number}}</span></div>
+									<a style="display: inline-block; color: #6D6D72; font-size: 13px;width: 52px;margin-left: 10px;" @click="deleting(val.cartId)">删除商品</a>
+								</div>
+							</div>
+							<div style="clear: both;"></div>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+			<!--//底部样式-->
+			<div id="car_money" v-show="shop.length>0">
+				<span class="yunfei">运费:<block>{{freight}}</block>元</span>
+				<span class="span">商品:<block>{{money}}</block>元</span>
+				<span v-show="rebate==NaN">会员折扣:<block>{{rebate}}</block></span>
+				<span class="span">件数:<block>{{shopnum}}</block>件</span>
+				<span class="span" v-show="rebate==NaN"> 总计:<block>{{money*rebate+freight}}</block>元</span>
+				<span class="span" v-show="rebate!=NaN"> 总计:<block>{{money+freight}}</block>元</span>
+			</div>
+
+			<!--备注：客户的要求是官方既可以帮助用户填写代填写发货地址-->
+
+			<div id="list_t" v-show="shop.length>0">
+				<h3>收货地址</h3>
+				<ul class="mui-table-view" id="list_id" @click="openindex('shouhuodizhi')">
+					<li class="mui-table-view-cell">
+						<h2>{{adreess.name}}</h2>
+						<p>{{adreess.phone}}&nbsp;{{adreess.province}}{{adreess.city}}{{adreess.area}}{{adreess.detail}}</p>
+					</li>
+
+				</ul>
+			</div>
+			<div id="list_t" v-show="shop.length>0">
+				<div class="nav-itm">
+					<div class="item" @click="nav(true)" :class="fhuoboo ? 'nav-success':''">
+						用商家地址发货
+					</div>
+					<div class="item" @click="nav(false)":class="fhuoboo ? '':'nav-success'">
+						我的一键代发货地址
+					</div>
+				</div>
+				<ul class="mui-table-view" id="list_id" v-show="!fhuoboo" @click="openindex('fahuodizhi')">
+					<li class="mui-table-view-cell">
+						<h2>{{adreessDf.name}}</h2>
+						<p>{{adreessDf.phone}}&nbsp;{{adreessDf.province}}{{adreessDf.city}}{{adreessDf.area}}{{adreessDf.detail}}</p>
+					</li>
+
+				</ul>
+			</div>
+
+			<div class="button" v-show="shop.length>0">
+				<button id="zhifubao" @click="gmoney">支付宝支付</button>
+			</div>
+			<div class="noshop" @click="openindex('shouye')" v-show="shop.length==0">
+				您的购物车是空的,快去购买商品吧
+			</div>
+		</div>
+		<script type="text/javascript">
+			
+			var myurl = localStorage.getItem('myurl')
+			var myvue = new Vue({
+				el: '#app',
+				data: {
+					adreess: [],
+					adreessDf: [],
+					shop: [],
+					shopnum: 0,
+					money: 0,
+					rebate: 1,
+					allparameters: 0,
+					freight: 0,
+					channel:[],
+					fhuoboo:true
+				},
+				methods: {
+					back:function(){
+						mui.openWindow({
+							url:'../shouye/shouye.html',
+							id:'shouye'
+						})
+					},
+					nav:function(boo){
+						this.fhuoboo=boo
+					},
+					//					商品熟练的改变
+					add: function(event, price,id,type) {
+						var num = event.path[1].children[1].value
+						event.path[3].children[1].childNodes[1].innerHTML = price * num
+						var that = this
+						if(type=='0'){
+							$.ajax({
+								type: "post",
+								url: myurl+'/updateShoppingCartByIdAndNumber',
+								async: true,
+								data: {
+									id: id,
+									number:num-1
+								},
+								dataType: 'json',
+								success: function(res) {
+									that.myajax('queryShoppingCartPojo')
+									this.allmoney()
+								}
+							});
+						}else{
+							$.ajax({
+								type: "post",
+								url: myurl+'/updateShoppingCartByIdAndNumber',
+								async: true,
+								data: {
+									id: id,
+									number:parseInt(num)+1
+								},
+								dataType: 'json',
+								success: function(res) {
+									that.myajax('queryShoppingCartPojo')
+									this.allmoney()
+								}
+							});
+						}
+					},
+					//					计算总价格
+					allmoney: function() {
+						this.money = 0
+						this.allparameters = 0
+						var that = this
+						$('.itml_div').each(function(index, el) {
+							if($('.mylist:eq('+index+') .myspan').attr('class') == 'dingwei myspan') {
+								that.money = that.money + parseFloat($(this).children('.itml_div_r').children('.car').children('.nowparent').children('.nowmoney').html())
+								that.allparameters += parseFloat($(this).attr('data-para'))
+							}
+						})
+					},
+					//					商品选中状态
+					tomoney: function(id, event, index) {
+						if($('.mylist:eq('+index+') .myspan').attr('class') == 'myspan') {
+							$('.mylist:eq('+index+') .myspan').attr('class', 'dingwei myspan')
+							this.shopnum++	
+						} else {
+							$('.mylist:eq('+index+') .myspan').attr('class', 'myspan')
+							this.shopnum--
+						}
+						this.myajax('queryShoppingCartPojo')
+						this.allmoney()
+						this.mymold()
+					},
+					//					发送支付请求
+					gmoney:function(){
+						if(this.adreess==''){
+							mui.toast('您的收货地址为空')
+						}else{
+							this.gomoney()
+						}
+					},
+					gomoney: function() {
+						var myarr = []
+						var that = this
+						$('.itml_div').each(function(index, el) {
+							if($('.mylist:eq('+index+') .myspan').attr('class') == 'dingwei myspan') {
+								var htm = {
+									id: el.getAttribute('data-id'),
+									color: el.children[1].children[1].children[0].innerHTML,
+									num: el.children[1].children[2].children[0].children[0].children[1].value
+								}
+								myarr.push(htm)
+							}
+						})
+						
+						var shopprice=0
+						if(that.rebate==NaN){
+							shopprice=that.money * that.rebate
+						}else{
+							shopprice=that.money
+						}
+						var shoppingUserId = localStorage.getItem('userid');
+						var goodsMessage = '[{goodsMessage:' + JSON.stringify(myarr) + '}]';
+						var receivingAddressId = that.adreess.id;
+						if(this.fhuoboo){
+							var insteadShipAddressId = '';
+						}else{
+							var insteadShipAddressId = that.adreessDf.id
+						}
+						var goodsPrice = shopprice;
+						var isShip = 1;
+						var shipPrice = that.freight;
+						var ALIPAYSERVER=myurl+'/createAliPay?shoppingUserId='+shoppingUserId+'&goodsMessage='+encodeURIComponent(goodsMessage)+'&receivingAddressId='+receivingAddressId+'&insteadShipAddressId='+insteadShipAddressId+'&goodsPrice='+goodsPrice+'&isShip='+isShip+'&shipPrice='+shipPrice;
+						    var xhr=new XMLHttpRequest();
+						    xhr.onreadystatechange=function(){
+						        switch(xhr.readyState){
+						            case 4:
+						            if(xhr.status==200){
+						                plus.payment.request(that.channel,xhr.responseText,function(result){
+						                    plus.nativeUI.alert("支付成功！",function(){
+						                        mui.openWindow({
+						                        	url:'payment.html',
+						                        	id:'payment'
+						                        })
+						                    });
+						                },function(error){
+						                    plus.nativeUI.alert("支付失败：" + error.code);
+						                });
+						            }else{
+						                alert("获取订单信息失败！");
+						            }
+						            break;
+						            default:
+						            break;
+						        }
+						    }
+						    xhr.open('POST',ALIPAYSERVER);
+						    xhr.send();
+						
+					},
+					//					打开新页面
+					openindex: function(durl) {
+						mui.openWindow({
+							url: '../' + durl + '/' + durl + '.html',
+							id: durl
+						})
+					},
+					//					获取购物车数据
+					myajax: function(url) {
+						var that = this
+						$.ajax({
+							type: "post",
+							url: myurl + '/' + url,
+							async: false,
+							data: {
+								shoppingUserId:localStorage.getItem('userid')
+							},
+							dataType: 'json',
+							success: function(res) {
+								that.shop = res.data[0]
+								that.adreessDf = res.data[3]
+								that.adreess = res.data[2]
+								that.rebate = res.data[1].rebate / 10
+							}
+						});
+
+					},
+					//					获取运费----------------------------------------------------------------------------------------------------------------
+					mymold: function() {
+						var that = this
+						$.ajax({
+							type: "post",
+							url: myurl + '/queryAllFreeShippingMold',
+							async: false,
+							dataType: 'json',
+							success: function(res) {
+								console.log(res)
+								if(res.data[0].isFreeShipping == 1) {
+									//									包邮·
+									console.log('包邮')
+									if(res.data[0].isAssignFreeShipping == 2) {
+										//										承担运费
+										console.log('无条件包邮')
+									} else {
+										//										有条件承担运费
+										console.log('有条件包邮')
+										if(res.data[0].assignFreeShippingFactor == 1) {
+											//											满足金额免运费
+											console.log('满足金额免运费')
+											if(res.data[0].assignFreeShippingPrice <= that.money) {
+												//												承担运费
+												console.log('满足金额')
+											} else {
+												//												不承担
+												console.log('不满足金额')
+												that.playfreight(1, res.data[0].price)
+											}
+										} else if(res.data[0].assignFreeShippingFactor == 2) {
+											//											满足数量免运费
+											console.log('满足数量免运费')
+											if(res.data[0].assignFreeShippingNum <= that.shopnum) {
+												//												承担运费
+												console.log('满足数量')
+											} else {
+												//												不承担
+												console.log('不满足数量')
+												that.playfreight(1, res.data[0].price)
+											}
+										} else {
+											//											满足数量和重量
+											console.log('满足数量和重量免运费')
+											if(res.data[0].assignFreeShippingNum <= that.shopnum && res.data[0].assignFreeShippingWeight >= that.allparameters) {
+												//												承担运费
+												console.log('满足')
+											} else {
+												//												不承担
+												console.log('不满足')
+												that.playfreight(0, res.data[0].price)
+											}
+										}
+									}
+								} else {
+									//									不包邮
+									console.log('不包邮')
+									if(res.data[0].style == 1) {
+										//										按件数
+										console.log('按件数')
+										that.playfreight(0, res.data[0].price)
+									} else {
+										//										按重量
+										console.log('按重量')
+										that.playfreight(1, res.data[0].price)
+									}
+								}
+							}
+						});
+					},
+					//					运费计算
+					playfreight: function(ftype, freadress) {
+						//						获取收货地址
+						var mycity = this.adreess.city
+						var boo = 0
+						//						计算收货地是否在配置内
+						for(var i = 0; i < $.parseJSON(freadress)[0].rule.length; i++) {
+							if($.parseJSON(freadress)[0].rule[i].indexOf(mycity) != -1) {
+								boo = i
+							}
+						}
+						//						如果不在配置内，启用默认运费
+						if(boo == -1) {
+							if(ftype == 0) {
+								//								按数量计费
+								this.freight = parseFloat($.parseJSON(freadress)[0].default[1])
+								if(this.shopnum > parseInt($.parseJSON(freadress)[0].default[0]) == false) {
+									console.log('数量小于')
+								} else {
+									//									如果数量超出最高低价数量
+									var a = 0
+									console.log(parseInt((this.shopnum - parseInt($.parseJSON(freadress)[0].default[0])) / 3))
+									for(var j = this.shopnum - parseInt($.parseJSON(freadress)[0].default[0]); j > 0; j -= parseInt($.parseJSON(freadress)[0].default[0])) {
+										a++
+									}
+									this.freight += a * parseInt($.parseJSON(freadress)[0].default[3])
+								}
+							} else {
+								//								按重量计费
+								this.freight = parseFloat($.parseJSON(freadress)[0].default[1])
+								if(this.allparameters > parseInt($.parseJSON(freadress)[0].default[0]) == false) {
+									console.log('重量太大')
+								} else {
+									//									如果数量超出最高低价数量
+									var a = 0
+									console.log(parseInt((this.allparameters - parseInt($.parseJSON(freadress)[0].default[0])) / 3))
+									for(var j = this.allparameters - parseInt($.parseJSON(freadress)[0].default[0]); j > 0; j -= parseInt($.parseJSON(freadress)[0].default[0])) {
+										a++
+									}
+									this.freight += a * parseInt($.parseJSON(freadress)[0].default[3])
+								}
+							}
+						} else {
+							//							如果在配置内，对地区进行计算
+							if(ftype == 0) {
+								//								按数量计费
+								this.freight = parseFloat($.parseJSON(freadress)[0].rule[boo][2])
+								if(this.shopnum > parseInt($.parseJSON(freadress)[0].rule[boo][1]) == false) {
+									console.log('数量小于')
+								} else {
+									//									如果数量超出最高低价数量
+									var a = 0
+									for(var j = this.shopnum - parseInt($.parseJSON(freadress)[0].rule[boo][1]); j > 0; j -= parseInt($.parseJSON(freadress)[0].rule[boo][3])) {
+										a++
+									}
+									this.freight += a * parseInt($.parseJSON(freadress)[0].rule[boo][4])
+								}
+							} else {
+								//								按重量计费
+								this.freight = parseFloat($.parseJSON(freadress)[0].rule[boo][2])
+								if(this.allparameters > parseInt($.parseJSON(freadress)[0].rule[boo][1]) == false) {
+									console.log('重量太大')
+								} else {
+									//									如果数量超出最高低价数量
+									var a = 0
+									for(var j = this.allparameters - parseInt($.parseJSON(freadress)[0].rule[boo][1]); j > 0; j -= parseInt($.parseJSON(freadress)[0].rule[boo][3])) {
+										a++
+									}
+									this.freight += a * parseFloat($.parseJSON(freadress)[0].rule[boo][4])
+								}
+							}
+						}
+
+					},
+					deleting: function(id) {
+						var that = this
+						$.ajax({
+							type: "post",
+							url: myurl + "/deleteShoppingCartById",
+							async: false,
+							data: {
+								id: id
+							},
+							dataType: 'json',
+							success: function(res) {
+								mui.toast('删除成功')
+								that.myajax('queryShoppingCartPojo')
+							}
+						});
+					}
+				},
+				mounted: function() {
+					var that=this
+						// 1. 获取支付通道
+						function plusReady(){
+						    // 获取支付通道
+						    plus.payment.getChannels(function(channels){
+						        that.channel=channels[0];
+						    },function(e){
+						        alert("获取支付通道失败："+e.message);
+						    });
+						}
+						if(window.plus){
+							plusReady();
+						}else{
+							document.addEventListener('plusready',plusReady,false);
+						}
+					if(localStorage.getItem('userid') == null) {
+						mui.openWindow({
+							url: '../login/login.html',
+							id: 'login'
+						})
+					} else {
+						this.myajax('queryShoppingCartPojo')
+					}
+				},
+				filters:{
+					imgUrl: function(value) {
+								return localStorage.getItem('myurlimg')+value.substr(value.indexOf('Shoppings'))
+							}
+				}
+			})
+		</script>
+	</body>
+
+</html>

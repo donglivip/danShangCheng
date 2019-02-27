@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" /> 
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.js"></script>
+		<link rel="stylesheet" href="../css/com.css" />
+		<link rel="stylesheet" href="wode.css" />
+		<link rel="stylesheet" href="iconfont.css" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" id="com">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">个人中心</h1>
+		</header>
+		<div class="mui-content" id="app">
+			
+			<div class="div_img">
+				<img  class="info" id="img" :src="userimg | imgUrl" v-if="userimg!=''"/>
+				<img src="default.jpg" v-if="userimg==''"/>
+				<h4 class="info" id="h4">{{userdata.menberLevel}}</h4>
+				<h3 class="inf" v-show="userdata.endDate!=undefined">会员到期时间：<span style="color: red;">{{userdata.endDate}}</span></h3>
+			</div>
+			
+			<div class="div_ul">
+				
+				<ul class="mui-table-view">
+					
+			        <li class="mui-table-view-cell">
+			            <span class="mui-navigate-right">
+			               我的订单
+			            </span>
+			        </li>
+			        
+			          <li class="mui-table-view-cell">
+			            <span class="mui-navigate-right">
+			               会员充值
+			            </span>
+			        </li>
+			        
+			        
+			         <li class="mui-table-view-cell">
+			            <span class="mui-navigate-right">
+			               我的收藏
+			            </span>
+			        </li>
+			        
+			        
+			          <li class="mui-table-view-cell">
+			            <span class="mui-navigate-right">
+			              	 收货地址
+			            </span>
+			        </li>
+			        <li class="mui-table-view-cell">
+			            <span class="mui-navigate-right">
+			            	 代发货地址
+			            </span>
+			        </li>
+			        <li class="mui-table-view-cell">
+			            <span class="mui-navigate-right">
+			               	关于我们
+			            </span>
+			        </li>
+			         <li class="mui-table-view-cell">
+			            <span class="mui-navigate-right">
+			               	修改密码
+			            </span>
+			        </li>
+			    </ul>
+			    <div class="nologin" @click="nologin">
+			    	退出登录
+			    </div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/dui.js" ></script>
+		
+		<script type="text/javascript">
+			var myurl=localStorage.getItem('myurl')
+			var myvue=new Vue({
+				el:'#app',
+				data:{
+					userdata:[],
+					userimg:localStorage.getItem('userimg')
+				},
+				mounted:function(){
+					var that=this
+					$.ajax({
+						type:"post",
+						url:myurl+"/queryMemberUserByShoppingUserId",
+						data:{
+							shoppingUserId:localStorage.getItem('userid')
+						},
+						dataType:'json',
+						success:function(res){
+							that.userdata=res.data
+							localStorage.setItem('vipgrade',res.data.menberLevel)
+						}
+					});
+				},
+				filters:{
+					imgUrl: function(value) {
+						return 'http://120.79.2.60/' + value.substr(value.indexOf('Shoppings'))
+					}
+				},
+				methods:{
+					nologin:function(){
+						localStorage.clear()
+						
+						mui.openWindow({
+							url:'../shouye/shouye.html',
+							id:'shouye'
+						})
+					}
+				}
+			})
+		</script>
+		<script type="text/javascript" src="wode.js" ></script>
+	</body>
+</html>

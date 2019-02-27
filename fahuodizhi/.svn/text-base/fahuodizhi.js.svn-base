@@ -1,0 +1,17 @@
+mui.init();
+
+	$(function(){
+		// 添加收货地址
+		$('#btn').click(function(){
+			var index = $(this).index();
+			alert(index);
+			dui.jump('../add_addressDF/Add_address.html','add_addressDF');
+		});
+		
+		// 修改收货地址
+		$('.mui-table-view-cell').click(function(){
+			var index = $(this).index();
+			alert(index);
+			dui.jump('../add_addressDF/Add_address.html','add_addressDF');
+		});
+	});

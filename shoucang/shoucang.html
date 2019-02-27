@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="shoucang.css" />
+		<link rel="stylesheet" href="../css/com.css" />
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.js"></script>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav" id="com">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">收藏</h1>
+		</header>
+		<div class="mui-content" id="app">
+		    <div class="sy">
+            	<div class="itml_div" v-for="(val,index) in collect">
+            			<div class="itml_div_l" @click="opendetail(val.goodsUser)">
+            				<img :src="val.imgAddress | imgUrl" />
+            			</div>
+            			
+            			<div class="h4" @click="opendetail(val.goodsUser)">
+            				<span>{{val.name}}</span>
+            			</div>
+            			<div class="jiage">
+            				<span>
+            					<span v-show="val.isMail==1">包邮</span>
+            					<span v-show="val.isMail==2">不包邮</span>
+            				</span>
+            				<span>{{val.color}}</span>
+            				<p>￥<span>{{val.price}}</span>&nbsp;<button style="float: right; background: #FB1647; color: #FFFFFF;" @click="noCollect(val.id)">取消收藏</button></p>
+            			</div>
+            		<div style="clear: both;"></div>	
+            	</div>
+		    </div>		
+		</div>
+		<script type="text/javascript">
+			var myurl=localStorage.getItem('myurl')
+			var userid=localStorage.getItem('userid')
+			console.log(userid)
+			var myvue=new Vue({
+				el:'#app',
+				data:{
+					collect:[]
+				},
+				methods:{
+					myajax:function(){
+						var that=this
+						$.ajax({
+							type:"post",
+							url:myurl+"/queryGoods",
+							async:false,
+							dataType:'json',
+							data:{
+								shoppingUserId:userid
+							},
+							success:function(res){
+								that.collect=res.data 
+								console.log(res)
+							}
+						});
+					},
+					noCollect:function(id){
+						var that=this
+						$.ajax({
+							type:"post",
+							url:myurl+"/deleteGoodsSaveByPrimaryKey",
+							async:false,
+							dataType:'json',
+							data:{
+								id:id
+							},
+							success:function(res){
+								mui.alert('取消成功','提示')
+							}
+						});
+						that.myajax()
+					},
+					opendetail:function(id){
+						localStorage.setItem('index-detail',id)
+						mui.openWindow({
+							url:'../xiangqing/xiangqing002.html'
+						})
+					}
+				},
+				mounted:function(){
+					this.myajax()
+				},
+				filters: {
+					imgUrl: function(value) {
+						return localStorage.getItem('myurlimg')+value
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

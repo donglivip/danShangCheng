@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+		<meta name="HandheldFriendly" content="true"/>
+		<meta name="MobileOptimized" content="320"/>
+		<title></title>
+		<script type="text/javascript" src="../js/mui.min.js" ></script>
+		<script type="text/javascript" src="index.js" ></script>
+		<link rel="stylesheet" type="text/css" href="../css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="xiangqing.css"/>
+	</head> 
+	<body>
+		<header class="mui-text-center mui-bar mui-bar-nav">
+			<div class="nvtt">分享</div>
+		</header>
+		
+		<div id="dcontent" class="dcontent">
+			
+			<br/>
+			
+			<p class="heading">分享内容：</p>
+				<textarea id="sharecontent" rows="3">我正在使用HBuilder+HTML5开发移动应用，赶紧跟我一起来体验www.baidu.com</textarea>
+				
+			<br/>
+			</table>
+		
+		
+				<img id="pic" src="index.png" style="margin:  0 auto;display: block;"/>
+			<br/>
+			
+			<br/>
+			<br/>
+			<div class="button" id="shareShow">分 享</div>
+			<br/>
+			<br/>
+			<div class="button" id="fanhui">返回</div>
+		
+		
+		</div>
+		
+		<script type="text/javascript" src="in.js" ></script>
+	</body>
+</html>

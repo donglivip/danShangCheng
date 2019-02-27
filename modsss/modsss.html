@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="../css/com.css" />
+		<link rel="stylesheet" href="modsss.css" />
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.js"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="bmob-min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav" id="com">
+			    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			    <h1 class="mui-title">找回密码</h1>
+			</header>
+			<div class="mui-content">
+			      <div class="mui-input-group div_div">
+			            <div class="mui-input-row">
+			            	<label>手机</label>
+			            	<input type="number" v-model="phone" placeholder="请输入手机号">
+			        	</div>
+			        	 <div class="mui-input-row">
+			          		<label>验证码</label>
+			           			 <input type="text" placeholder="请输入验证码" v-model="mycode">
+			           			 	<div class="yzma-btn" @click="news">
+			      			 			<button>{{text}}</button>
+			      					</div>
+			      		</div>
+			      		<div class="mui-input-row">
+			            	<label>新密码</label>
+			            	<input type="text"  placeholder="请输入密码" v-model="password">
+			        	</div>
+			      </div>
+			  	<div class="buttom_div">
+			  		<button id="com" @click="mysubmit">找回密码</button>
+			  	</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var myurl = localStorage.getItem('myurl')
+			var myvue = new Vue({
+				el: '#app',
+				data: {
+					phone: '',
+					password: '',
+					code: '',
+					text: '获取验证码',
+					mycode: ''
+				},
+				methods: {
+					mysubmit: function() {
+						if(this.code == this.mycode&&this.password!='') {
+							var that = this
+							$.ajax({
+								type: "post",
+								url: myurl + "/updateByShoppingUserId",
+								async: false,
+								dataType: 'json',
+								data: {
+									phone: that.phone,
+									password: that.password
+								},
+								success: function(res) {
+									mui.openWindow({
+										url: '../login/login.html',
+										id:'login'
+									})
+								},
+								error: function() {
+									mui.alert('提交失败,请稍后重试!!', '失败')
+								}
+							})
+						} else {
+							mui.alert('验证码错误请重试', '提示')
+						}
+					},
+					news: function() {
+						var that=this
+						if(this.text = '获取验证码') {
+							Bmob.initialize("314da16512cb643efa82150d11442faf", "8879e3ec8f65eb9ce63d0301d22b3b8b");
+							Bmob.Sms.requestSms({
+								"mobilePhoneNumber":that.phone,
+								"content": "您的验证码是：" + this.code + ", 有效期是10分钟。"
+							}).then(function(obj) {
+								that.text = '验证码已发送'
+							}, function(err) {
+								that.text = '验证码发送失败'
+							});
+						}
+					}
+				},
+				mounted: function() {
+					var code = Math.floor(Math.random() * 9000) + 1000;
+					this.code = code
+				}
+			})
+	</script>
+</html>

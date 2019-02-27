@@ -1,0 +1,113 @@
+{
+  "login/login.html": {
+    "refer": [
+      "shouye/shouye.html",
+      "register/register.html"
+    ]
+  },
+  "shouye/shouye.html": {
+    "refer": [
+      "login/login.html",
+      "gouwuche/gouwuche.html",
+      "wode/wode.html",
+      "xiangqing/xiangqing002.html",
+      "shouye/listAll.html",
+      "fenlei/fenlei.html",
+      "xiangqing/qq.html"
+    ],
+    "resources": [
+      "fonts/mui.ttf"
+    ]
+  },
+  "gouwuche/gouwuche.html": {
+    "refer": [
+      "gouwuche/payment.html",
+      "shouye/shouye.html",
+      "shouhuodizhi/shouhuodizhi.html",
+      "xiangqing/xiangqing002.html"
+    ]
+  },
+  "wode/wode.html": {
+    "refer": [
+      "shouye/shouye.html",
+      "dingdan/dingdan.html",
+      "chongzhi/chongzhi.html",
+      "info/info.html",
+      "shoucang/shoucang.html",
+      "shouhuodizhi/shouhuodizhi.html"
+    ]
+  },
+  "gouwuche/payment.html": {
+    "refer": [
+      "dingdan/dingdan.html",
+      "shouye/shouye.html"
+    ]
+  },
+  "xiangqing/xiangqing002.html": {
+    "refer": [
+      "xiangqing/index.html",
+      "gouwuche/gouwuche.html",
+      "xiangqing/qq.html",
+      "login/login.html",
+      "xiangqing/ratingall.html"
+    ]
+  },
+  "chongzhi/chongzhi.html": {
+    "refer": [
+      "chongzhi/payment.html"
+    ]
+  },
+  "chongzhi/payment.html": {
+    "refer": [
+      "login/login.html"
+    ]
+  },
+  "dingdan/dingdan.html": {
+    "refer": [
+      "dingdan/payment.html",
+      "dingdan/ratings.html",
+      "dingdan/dingdanlist.html"
+    ]
+  },
+  "shangpin/shangpin.html": {
+    "refer": [
+      "xiangqing/xiangqing.html"
+    ]
+  },
+  "fenlei/fenlei.html": {
+    "refer": [
+      "shangpin/shangpin.html"
+    ]
+  },
+  "register/register.html": {
+    "refer": [
+      "login/login.html"
+    ]
+  },
+  "shoucang/shoucang.html": {
+    "refer": [
+      "xiangqing/xiangqing003.html"
+    ]
+  },
+  "shouhuodizhi/shouhuodizhi.html": {
+    "refer": [
+      "add_address/Add_address.html",
+      "gouwuche/gouwuche.html"
+    ]
+  },
+  "add_address/Add_address.html": {
+    "refer": [
+      "shouhuodizhi/shouhuodizhi.html"
+    ]
+  },
+  "dingdan/ratings.html": {
+    "refer": [
+      "shouye/shouye.html"
+    ]
+  },
+  "dingdan/dingdanlist.html": {
+    "refer": [
+      "dingdan/ratings.html"
+    ]
+  }
+}

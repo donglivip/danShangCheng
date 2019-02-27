@@ -1,0 +1,9 @@
+.header{display: flex;align-items: center;background: #FFFFFF;font-size: .36rem;height: .8rem;}
+.header a{color: #767676;}
+*{margin: 0;padding: 0;}
+html,body,#app{height: 100%;}
+.main{height: calc(100% - .8rem);overflow-y: scroll;}
+.title{font-size: .4rem;margin: .3rem .2rem;font-weight: 600;line-height: .45rem;height: .9rem;}
+.time{margin: 0 .2rem .3rem;font-size: .24rem;}
+.text{margin: 0 .2rem .3rem;font-size: .3rem;}
+img{width: calc(100% - .4rem);margin: .2rem;}

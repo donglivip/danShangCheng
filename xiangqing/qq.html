@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="xiangqing.css" />
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<style type="text/css">
+		html,body,#app,.qq-content{width: 100%;height:100%;background: white;}
+		.qq-content{height: calc(100% - 44px);}
+		.rgba{position: fixed;width: 100%;height:100%;background: rgba(0,0,0,0.8);z-index: 999;top: 0;left: 0;display: none;}
+		.rgba img{width: 50%;margin: 50% auto 20px;display: block;}
+		.rgba div{color: white;text-align: center;font-size: 20px;}
+	</style>
+	<body>
+		<div id="app">
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">联系客服</h1>
+		    <div class="mui-pull-right""></div>
+		</header>
+		<div class="mui-content qq-content">
+			<div class="qq-item">
+				<img src="qq.png" id="qq"/>
+			</div>
+			<div class="qq-item">
+				<img src="wxin.png" id="weixin"/>
+				
+			</div>
+		</div>
+		<div class="rgba">
+			<img src="wxin.jpg"/>
+			<div>
+					13923007830
+				</div>
+		</div>
+	   </div>
+	</body>
+	<script type="text/javascript">
+		$(function(){
+			$('#weixin').click(function(){
+				$('.rgba').show()
+			})
+			$('.rgba').click(function(){
+				$('.rgba').hide()
+			})
+			$('#qq').click(function(){
+				window.location.href = 'http://wpa.qq.com/msgrd?v=3&uin=995317645&site=qq&menu=yes'
+			})
+		})
+	</script>
+</html>

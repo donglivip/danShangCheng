@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script type="text/javascript" src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.min.js"></script>
+		<link rel="stylesheet" href="dingdan.css" />
+		<link rel="stylesheet" href="../css/com.css" />
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav " id="com">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">我的订单</h1>
+		</header>
+		<div class="mui-content" id="app">
+			<div class="list" v-for="(val,index) in orderlist">
+				<div class="order-top">
+					订单编号:{{val.id}}
+				</div>
+				<div class="put_div">
+					<div class="div_img">
+						<img :src="val.imgAddress | imgUrl"/>
+					</div>
+					<div class="div_tie">
+						<div class="h4_class">
+							<h4>{{val.name}}</h4>
+						</div>
+						<div class="button_class">
+							<div v-show="val.isPay==1">
+								<button v-show="val.isShip==1" @click="updateById(val.id)">确认收货</button>
+								<button v-show="val.isShip==2" @click="updateById(val.id)">确认收货</button>
+								<button v-show="val.isShip==3" @click="ratings(val.id,val.goodsId,val.shoppingUserId,val.childId)">评价</button>
+							</div>
+							<button v-show="val.isPay==2" @click="pay(val.id,val.price)">点我付款</button>
+						</div>
+						<div class="class_span">
+							<span>{{val.color}}</span>&nbsp;
+							<span v-show="val.isMail==1">包邮</span>
+							<span v-show="val.isMail==2">不包邮</span> &nbsp;
+							<span>其他参数</span>
+						</div>
+						<p class="shopnum">
+							<span style="color: #FF0000;border: 0px solid;">原价：{{val.price}}</span>&nbsp;
+							<span>数量：{{val.goodsNun}}运费：{{val.shipPrice}}</span>
+							<span  @click="logistics(val.express_number)">查询物流</span>
+						</p>
+					</div>
+				</div>
+				
+			</div>
+			<div v-show="orderlist==undefined" class="gmai" @click="gmai">
+				该订单信息不存在,快去首页看看吧
+			</div>
+		</div>
+		<script type="text/javascript">
+			var myurl = localStorage.getItem('myurl')
+			var userid = localStorage.getItem('userid')
+			var myvue = new Vue({
+				el: '#app',
+				data: {
+					orderlist: []
+				},
+				mounted: function() {
+					this.myajax()
+				},
+				methods: {
+					opendetail:function(myid){
+						localStorage.setItem('index-detail',myid)
+						mui.openWindow({
+							url: '../xiangqing/xiangqing002.html'
+						})
+					},
+					ratings: function(orderid,goodsId,shoppingUserId,childId) {
+						localStorage.setItem('orderid',orderid)
+						localStorage.setItem('goodsId',goodsId)
+						localStorage.setItem('shoppingUserId',shoppingUserId)
+						localStorage.setItem('childId',childId)
+						mui.openWindow({
+							url: 'ratings.html',
+							id: 'ratings'
+						})
+					},
+					pay: function(id, money) {
+						$.ajax({
+							type: "post",
+							url: myurl + "/unpaidAliPay",
+							async: false,
+							data: {
+								orderId: id
+							},
+							dataType: 'json',
+							success: function(res) {
+								localStorage.setItem('ordertext', res[0])
+								localStorage.setItem('allmoney', money)
+								localStorage.setItem('orderId', id)
+							}
+						});
+						mui.openWindow({
+							url: 'payment.html',
+							id: 'payment'
+						})
+
+					},
+					logistics: function(orderid) {
+						if(orderid == undefined) {
+							mui.alert('暂无物流信息，请耐心等候', '提示')
+						} else {
+							$.ajax({
+								type:"post",
+								url:"https://way.jd.com/jisuapi/query",
+								async:true,
+								data:{
+									type:'SFEXPRESS',
+									number:orderid,
+									appkey:'14ea278a5e0af64f5f66e2f401bd284d'
+								},
+								dataType:'json',
+								success:function(res){
+									mui.alert('您的物流信息为:' + res.result.msg + '', '提示')
+								}
+							});
+						}
+					},
+					myajax: function() {
+						var that = this
+						$.ajax({
+							type: "post",
+							url: myurl + "/queryMyOrderByorderId",
+							async: false,
+							data: {
+								id: localStorage.getItem('childid')
+							},
+							dataType: 'json',
+							success: function(res) {
+								console.log(res)
+								that.orderlist = res.data
+							}
+						});
+					},
+					gmai: function() {
+						mui.openWindow({
+							url: '../shouye/shouye.html',
+							id: 'shouye'
+						})
+					},
+					updateById: function(orderid) {
+						var that = this
+						$.ajax({
+							type: "post",
+							url: myurl + "/updateById",
+							async: false,
+							data: {
+								id: orderid
+							},
+							dataType: 'json',
+							success: function(res) {
+								mui.alert('收货成功', '状态')
+								that.myajax()
+							},
+							error: function() {
+								mui.alert('收货失败,请稍后重试!!', '状态')
+							}
+						});
+					}
+				},
+				filters: {
+					imgUrl: function(value) {
+						return localStorage.getItem('myurlimg') + value
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

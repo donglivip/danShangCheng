@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script type="text/javascript" src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.min.js" ></script>
+		<link rel="stylesheet" href="../css/com.css" />
+		<link rel="stylesheet" href="shouhuodizhi.css" />
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav" id="com">
+		    <a class="mui-icon mui-icon-left-nav mui-pull-left" href="../gouwuche/gouwuche.html"></a>
+		    <h1 class="mui-title">收货地址</h1>
+		    <button id='btn' class="mui-btn mui-btn-link mui-btn-nav mui-pull-right"></button>
+		</header>
+		<!--内容-->
+			<div class="mui-content">
+			    <ul class="mui-table-view" id="list">
+			            <li class="mui-table-view-cell" v-for="(val,index) in adress" @click="mydefault(val.id,val.name,val.phone,val.province,val.city,val.area,val.detail)">
+			                <h2>{{val.name}}<span @click.stop="change(val.id,val.name,val.phone,val.province,val.city,val.area,val.detail)">修改</span><span @click.stop="deleteL(val.id)">删除</span></h2>
+			                <p>{{val.phone}}  {{val.province}}{{val.city}}{{val.area}}{{val.detail}}</p>
+			            </li>
+			    </ul>
+			    <p style="text-align: center;">
+			    	友情提醒:您最近一次修改的地址将会作为您的默认地址
+			    </p>
+			    <a class="add-address" >
+			    	添加收货地址
+			    </a>
+			</div>
+			</div>
+		<script type="text/javascript">
+			var myurl=localStorage.getItem('myurl')
+			var userid=localStorage.getItem('userid')
+			var myvue=new Vue({
+				el:'#app',
+				data:{
+					adress:[]
+				},
+				mounted:function(){
+					this.myajax()
+				},
+				methods:{
+					open:function(){
+						mui.openWindow({
+							url:'../add_address/Add_address.html',
+							id:'Add_address'
+						})
+					},
+					mydefault:function(id,name,phone,province,city,area,detail){
+						var that=this
+						$.ajax({
+							type:"post",
+							url:myurl+"/updateAddressById",
+							async:false,
+							data:{
+								id:id,
+								province:province,
+								city:city,
+								area:area,
+								phone:phone,
+								name:name,
+								detail:detail
+							},
+							success:function(res){
+								mui.toast('默认地址修改成功')
+							},
+							error:function(){
+								mui.toast('修改失败')
+							}
+						});
+					},
+					myajax:function(){
+						var that=this
+						$.ajax({
+							type:"post",
+							url:myurl+"/queryAddressByShoppingUserId",
+							async:false,
+							dataType:'json',
+							data:{
+								shippingUserId:userid			
+							},
+							success:function(res){
+								that.adress=res.data 
+							}
+						});
+					},
+					deleteL:function(addid){
+						console.log(addid)
+						var that=this
+						$.ajax({
+							type:"post",
+							url:myurl+"/deleteByPrimaryKey",
+							async:false,
+							data:{
+								id:addid
+							},
+							success:function(){
+								that.myajax()
+								mui.alert('删除成功','提示')
+							},
+							error:function(){
+								mui.alert('删除失败,请稍后重试!!','提示')
+							}
+						});
+					},
+					change:function(id,name,phone,province,city,area,detail){
+						localStorage.setItem('address02-id',id)
+						localStorage.setItem('address02-name',name)
+						localStorage.setItem('address02-phone',phone)
+						localStorage.setItem('address02-province',province)
+						localStorage.setItem('address02-city',city)
+						localStorage.setItem('address02-area',area)
+						localStorage.setItem('address02-detail',detail)
+						mui.openWindow({
+							url:'../add_address/add_address02.html',
+							id:'add_address02'
+						})
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

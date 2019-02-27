@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<title>Hello H5+</title>
+		<link rel="stylesheet" type="text/css" href="../css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../gouwuche/gouwuche.css" />
+
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav" id="nav_bg">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">会员充值</h1>
+		</header>
+		<div id="dcontent" class="dcontent">
+			<div class="main">
+				支付完成，感谢您对淘果团批的支持！！
+			</div>
+			<a href="../shouye/shouye.html" style="width: 70%;height: 30px;display: flex;justify-content: center;align-items: center;color: white;background: #FB1647;text-decoration: none;margin: 0 auto;">
+				继续购物
+			</a>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,51 @@
+mui.init();
+
+
+		var shareShow=document.getElementById("shareShow");
+		
+		
+		var fanhui=document.getElementById("fanhui");
+		
+		
+			fanhui.addEventListener("tap",function(){
+				mui.plusReady(function(){
+					
+					var child=plus.webview.getWebviewById("child");
+					
+					//获取未读消息
+					mui.fire(child,'get_message',{})
+									
+					//调用消息模块获取用户信息
+					var news=plus.webview.getWebviewById('news');
+					
+					mui.fire(news,'get_messag',{});
+					//获取未读消息
+					mui.fire(child,'get_message',{})
+					
+					back();
+				})
+			})
+		
+		
+			shareShow.addEventListener("tap",function(){
+					var shareBts=[];
+			
+					// 更新分享列表
+					var ss=shares['weixin'];
+					if(navigator.userAgent.indexOf('qihoo')<0){  //在360流应用中微信不支持分享图片
+						ss&&ss.nativeClient&&(shareBts.push({title:'微信朋友圈',s:ss,x:'WXSceneTimeline'}),
+						shareBts.push({title:'微信好友',s:ss,x:'WXSceneSession'}));
+					}
+					ss=shares['sinaweibo'];
+					//ss&&shareBts.push({title:'新浪微博',s:ss});//
+					ss=shares['qq'];
+					ss&&ss.nativeClient&&shareBts.push({title:'QQ',s:ss});
+					// 弹出分享列表
+					shareBts.length>0?plus.nativeUI.actionSheet({title:'分享',cancel:'取消',buttons:shareBts}, function(e){
+						(e.index>0)&&shareAction(shareBts[e.index-1],false);
+					}):plus.nativeUI.alert('当前环境无法支持分享操作!');
+				
+				
+			})
+		
+		

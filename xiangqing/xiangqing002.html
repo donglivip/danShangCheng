@@ -1,0 +1,588 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="xiangqing.css" />
+		<link rel="stylesheet" href="../shouye/iconfont.css" />
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	</head>
+
+	<body>
+		<div id="app">
+			<div class="join-layer" v-show="layuis">
+				<div class="layui-inner">
+					<div class="layui-top">
+						确定参加他(她)的拼团吗
+					</div>
+					<div class="layui-main">
+						{{joinname}}
+					</div>
+					<div class="layui-operation">
+						<span @click="joinshop('createPracticumAliPay','apiPayDeleteByorderId')">
+							确定
+						</span>
+						<span @click="showjoin">
+							取消
+						</span>
+					</div>
+				</div>
+			</div>
+			<header class="mui-bar mui-bar-nav">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title">商品详情</h1>
+				<div class="mui-pull-right mui-icon mui-icon-upload" @click="share"></div>
+			</header>
+			<div class="mui-content">
+				<!--头部样式和标题-->
+				<div class="xingqing_a">
+					<!--轮播图3张-->
+					<img class="info" id="img" :src="shopData[1][0].imgAddress | imgUrl" @click="previewImage(shopData[1][0].imgAddress)" />
+					<div class="jiage" v-for="(val,index) in shopData[2]">
+						<p>{{val.gradeName}}价格￥<span id="pric">{{shopData[1][0].price*(val.rebate/10) | four}}</span>&nbsp;<s style="margin-right: 5px;" id="price_a_b">￥{{shopData[1][0].price}}</s><span style="float: right;"><span>{{shopData[0]}}</span>人购买</span>
+						</p>
+					</div>
+					<div class="h444">
+						{{shopData[1][0].name}}
+					</div>
+				</div>
+				<div class="join">
+					<div class="join-top" v-show="shopData.length>6">
+						<span class="active">拼团列表</span>
+					</div>
+					<div class="join-text" v-for="val in shopData[6]" v-show="shopData.length>4">
+						<div class="join-list">
+							<img :src="val.headimg | imgUrl" class="join-img" />
+							<span class="join-name">
+								{{val.name}}
+								<span style="float: right;margin-right: 5px;">{{val.createdate}}</span>
+							</span>
+							<span class="join-click" @click="layuiboo(val.name,val.id)">
+								参与拼团
+							</span>
+						</div>
+					</div>
+					<div v-show="joinboo" style="text-align: center;padding-top: 5px;">
+						暂无拼团信息
+					</div>
+				</div>
+				<div class="join">
+
+					<div class="join-top">
+						<span class="active">商品参数</span>
+					</div>
+					<div class="join-text dlcell">
+						<div v-for="(val,index) in shopData[1][0].color.split(',')" :class="colornav==index?'color-ctive':''" @click="colorfun(val,index)">
+							{{val}}
+						</div>
+					</div>
+				</div>
+				<!--商品评价-->
+				<div class="xingqing_b">
+					<div class="join-top">
+						<span class="active">商品评价</span>
+						<block class="more" @click="torating">
+							查看所有
+						</block>
+					</div>
+					<div class="ratings">
+						<div v-show="ratingsdata.length==0" style="text-align: center;padding: 5px 0;">
+							暂无评价信息
+						</div>
+						<div class="ratings-list" v-for="(val,index) in ratingsdata" v-show="ratingsdata.length>0&&index<3">
+							<div class="ratings-top">
+								<img :src="val.headimg | imgUrl" />
+								<div class="ratings-name">
+									{{val.name}}
+								</div>
+								<div class="ratings-time">
+									{{val.createTime}}
+								</div>
+							</div>
+							<div class="ratings-main">
+								<p>
+									{{val.goodsViewContent}}
+								</p>
+								<div class="img-group">
+									<div class="img-wrap" v-show="val.goodsImge1!=''">
+										<img :src="val.goodsImge1 | imgUrl" />
+									</div>
+									<div class="img-wrap" v-show="val.goodsImge2!=''">
+										<img :src="val.goodsImge2 | imgUrl" />
+									</div>
+									<div class="img-wrap" v-show="val.goodsImge3!=''">
+										<img :src="val.goodsImge3 | imgUrl" />
+									</div>
+									<div class="img-wrap" v-show="val.goodsImge4!=''">
+										<img :src="val.goodsImge4 | imgUrl" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--商品详情-->
+				<div class="xingqing_b">
+					<div class="join-top">
+						<span class="active">商品详情</span>
+					</div>
+					<div id="conten" v-html="shopData[1][0].details"></div>
+				</div>
+			</div>
+			<div style="margin-bottom: 50px;"></div>
+			<!--购买框-->
+			<div class="xiangqing_c">
+				<div class="xiangqing_c_l" v-show="shopData.length>6">
+					<div class="span_r" id="btn" @click="joinshop('createPracticumAliPay1','apiPayDeleteByorderId1')">
+						<span class="span_r_a" id="crcc">拼团￥{{groupByPrice}}</span>
+					</div>
+				</div>
+				<div class="xiangqing_c_l" :class="shopData.length>6?'':'w60'">
+					<div class="span_r" id="btn" @click="jsonshop(shopData[1][0].id,'0')">
+						<span class="span_r_a" id="crcc">单独￥{{shopData[1][0].price}}</span>
+					</div>
+				</div>
+				<div class="xiangqing_c_r">
+					<span class="iconfont icon-shoucang" @click="collect(shopData[1][0].id)" v-show="iscollect==0"></span>
+					<span class="iconfont" @click="nocollect()" v-show="iscollect==1"><img src="collect.png"/></span>
+					<span class="gwuche"><img src="gwu.png" @click="jsonshop(shopData[1][0].id,'1')"/></span>
+					<span class="iconfont icon-kefu" id="kefu" @click="kefu"></span>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var myUrl = localStorage.getItem('myurl')
+			var shopid = localStorage.getItem('index-detail')
+			var vip = localStorage.getItem('vipgrade')
+			var myvue = new Vue({
+				el: '#app',
+				data: {
+					shopData: [],
+					colornav: -1,
+					color: '',
+					iscollect: 0,
+					collectid: '',
+					layuis: false,
+					joinname: '未知用户',
+					joinid: '',
+					adreess: [],
+					adreessDf: [],
+					freight: 0,
+					groupByPrice: 0,
+					joinboo: false,
+					ratingsdata: []
+				},
+				methods: {
+					torating: function() {
+						mui.openWindow({
+							url: 'ratingall.html',
+							id: 'ratingall'
+						})
+					},
+					showjoin: function() {
+						this.layuis = !this.layuis
+					},
+					previewImage: function(myurl) {
+						var myurl02 = localStorage.getItem('myurlimg') + myurl.substr(myurl.indexOf('Shoppings'))
+
+						function plusReady() {
+							plus.nativeUI.previewImage([
+								myurl02
+							]);
+						}
+						if(window.plus) {
+							plusReady();
+						} else {
+							document.addEventListener("plusready", plusReady, false);
+						}
+					},
+					//					获取运费
+					mymold: function() {
+						var that = this
+						$.ajax({
+							type: "post",
+							url: myUrl + '/queryAllFreeShippingMold',
+							async: false,
+							dataType: 'json',
+							success: function(res) {
+								if(res.data[0].isFreeShipping == 1) {
+									//									包邮·
+									if(res.data[0].isAssignFreeShipping == 2) {
+										//										承担运费
+									} else {
+										//										有条件承担运费
+										if(res.data[0].assignFreeShippingFactor == 1) {
+											//											满足金额免运费
+											if(res.data[0].assignFreeShippingPrice <= that.money) {
+												//												承担运费
+											} else {
+												//												不承担
+												that.playfreight(1, res.data[0].price)
+											}
+										} else if(res.data[0].assignFreeShippingFactor == 2) {
+											//											满足数量免运费
+											if(res.data[0].assignFreeShippingNum <= that.shopnum) {
+												//												承担运费
+											} else {
+												//												不承担
+												that.playfreight(1, res.data[0].price)
+											}
+										} else {
+											//											满足数量和重量
+											if(res.data[0].assignFreeShippingNum <= that.shopnum && res.data[0].assignFreeShippingWeight >= that.shopData[1][0].parameters) {
+												//												承担运费
+											} else {
+												//												不承担
+												that.playfreight(0, res.data[0].price)
+											}
+										}
+									}
+								} else {
+									//									不包邮
+									if(res.data[0].style == 1) {
+										//										按件数
+										that.playfreight(0, res.data[0].price)
+									} else {
+										//										按重量
+										that.playfreight(1, res.data[0].price)
+									}
+								}
+							}
+						});
+					},
+					//					运费计算
+					playfreight: function(ftype, freadress) {
+						//获取收货地址
+						var mycity = this.adreess.city
+						var boo = 0
+						//计算收货地是否在配置内
+						for(var i = 0; i < $.parseJSON(freadress)[0].rule.length; i++) {
+							if($.parseJSON(freadress)[0].rule[i].indexOf(mycity) != -1) {
+								boo = i
+							}
+						}
+						//如果不在配置内，启用默认运费
+						if(boo == -1) {
+							if(ftype == 0) {
+								//								按数量计费
+								this.freight = parseFloat($.parseJSON(freadress)[0].default[1])
+							} else {
+								//								按重量计费
+								this.freight = parseFloat($.parseJSON(freadress)[0].default[1])
+								if(this.shopData[1][0].parameters > parseInt($.parseJSON(freadress)[0].default[0]) == false) {} else {
+									//									如果数量超出最高低价数量
+									var a = 0
+									for(var j = this.shopData[1][0].parameters - parseInt($.parseJSON(freadress)[0].default[0]); j > 0; j -= parseInt($.parseJSON(freadress)[0].default[0])) {
+										a++
+									}
+									this.freight += a * parseInt($.parseJSON(freadress)[0].default[3])
+								}
+							}
+						} else {
+							//							如果在配置内，对地区进行计算
+							if(ftype == 0) {
+								//								按数量计费
+								this.freight = parseFloat($.parseJSON(freadress)[0].rule[boo][2])
+							} else {
+								//								按重量计费
+								this.freight = parseFloat($.parseJSON(freadress)[0].rule[boo][2])
+								if(this.shopData[1][0].parameters > parseInt($.parseJSON(freadress)[0].rule[boo][1]) == false) {} else {
+									//									如果数量超出最高低价数量
+									var a = 0
+									for(var j = this.shopData[1][0].parameters - parseInt($.parseJSON(freadress)[0].rule[boo][1]); j > 0; j -= parseInt($.parseJSON(freadress)[0].rule[boo][3])) {
+										a++
+									}
+									this.freight += a * parseFloat($.parseJSON(freadress)[0].rule[boo][4])
+								}
+							}
+						}
+					},
+					joinshop: function(join, dele) {
+						//						确定参加拼团
+						if(localStorage.getItem('userid')) {
+							var that = this
+							$.ajax({
+								type: "post",
+								url: myUrl + "/queryByUserhasPlayedfloor",
+								async: true,
+								dataType: 'json',
+								data: {
+									groupByPrintId: that.shopData[4].groupByPrintId,
+									shoppingUserId: localStorage.getItem('userid')
+								},
+								success: function(res) {
+									if(that.adreessDf.id == undefined) {
+										that.adreessDf.id == ''
+									}
+									var myarr = [{
+										id: that.shopData[1][0].id,
+										color: that.color,
+										num: 1
+									}]
+									if(res.data == 1) {
+										if(that.adreess.id != undefined) {
+											if(that.color != '') {
+												$.ajax({
+													type: "post",
+													url: myUrl + "/" + join,
+													async: false,
+													dataType: 'json',
+													data: {
+														shoppingUserId: localStorage.getItem('userid'),
+														goodsId: that.shopData[1][0].id,
+														goodsMessage: '[{goodsMessage:' + JSON.stringify(myarr) + '}]',
+														receivingAddressId: that.adreess.id,
+														insteadShipAddressId: that.adreessDf.id,
+														isShip: 2,
+														goodsPrice: that.shopData[4].groupByPrice,
+														shipPrice: that.freight,
+														groupByPrintId: that.shopData[4].groupByPrintId,
+														gruopById: that.shopData[5][0].gruopById
+													},
+													success: function(res) {
+														if(res.status == 200) {
+															plus.payment.request(that.aliChannel, res.data[0], function(result) {
+																plus.nativeUI.alert("支付成功！", function() {
+																	that.layuis = false
+																	that.myajax()
+																});
+															}, function(error) {
+																$.ajax({
+																	type: "post",
+																	url: myUrl + "/" + dele,
+																	async: true,
+																	dataType: 'json',
+																	data: {
+																		orderId: res.data[1],
+																		groupByChildId: res.data[2],
+																		groupById: res.data[3],
+																		groupByPrintId: res.data[4]
+																	},
+																	success: function(res) {
+																		plus.nativeUI.alert("支付失败：" + error.code);
+																		that.layuis = false
+																	}
+																});
+															});
+														} else {
+															alert('订单创建失败:' + res.msg + '')
+															that.layuis = false
+														}
+													}
+												});
+											} else {
+												alert('请选择商品参数')
+												that.layuis = false
+											}
+										} else {
+											alert('您的收货地址为空!!')
+											that.layuis = false
+										}
+									} else {
+										alert('您已经参加过拼团了!!')
+										that.layuis = false
+									}
+								}
+							});
+						} else {
+							mui.openWindow({
+								url: '../login/login.html',
+								id: 'login'
+							})
+						}
+					},
+					layuiboo: function(name, id) {
+						this.layuis = !this.layuis
+						this.joinname = name
+						this.joinid = id
+					},
+					share: function() {
+						mui.openWindow({
+							url: 'index.html',
+							id: 'index'
+						})
+					},
+					colorfun: function(val, index) {
+						this.colornav = index
+						this.color = val
+					},
+					jsonshop: function(shopid, open) {
+						if(localStorage.getItem('userid')) {
+							var that = this
+							if(that.colornav == -1) {
+								mui.alert('请选择商品参数', '提示')
+							} else {
+								$.ajax({
+									type: "post",
+									url: myUrl + "/insertByShoppingUserIdAndGoodsId",
+									async: true,
+									data: {
+										goodsId: shopid,
+										shoppingUserId: localStorage.getItem('userid'),
+										goodsColor: that.color
+									},
+									dataType: 'json',
+									success: function(res) {
+										mui.alert('加入购物车成功', '提示')
+									}
+								});
+								if(open == '0') {
+									mui.openWindow({
+										url: '../gouwuche/gouwuche.html',
+										id: 'gouwuche'
+									})
+								}
+							}
+						} else {
+							mui.openWindow({
+								url: '../login/login.html',
+								id: 'login'
+							})
+						}
+					},
+					myajax: function() {
+						var that = this
+						$.ajax({
+							type: "post",
+							url: myUrl + "/queryGoodsByIds",
+							async: true,
+							data: {
+								goodsUser: shopid,
+								shoppingUserId: localStorage.getItem('userid')
+							},
+							dataType: 'json',
+							success: function(res) {
+								console.log(res)
+								that.shopData = res.data
+								that.iscollect = res.data[3]
+								if(res.data.length > 5) {
+									that.groupByPrice = res.data[5].groupByPrice
+									that.ratingsdata = res.data[4]
+									if(res.data[5].length == 0) {
+										that.joinboo = true
+									}
+								} else {
+									that.groupByPrice = 0
+								}
+								localStorage.setItem('discount', res.data[2].rebate)
+							}
+						});
+						$.ajax({
+							type: "post",
+							url: myUrl + "/queryShoppingCartPojo",
+							async: true,
+							dataType: 'json',
+							data: {
+								shoppingUserId: localStorage.getItem('userid')
+							},
+							success: function(res) {
+
+								that.adreessDf = res.data[3]
+								that.adreess = res.data[2]
+							}
+						});
+					},
+					collect: function(id) {
+						if(localStorage.getItem('userid')) {
+							var that = this
+							$.ajax({
+								type: "post",
+								url: myUrl + "/insert",
+								async: true,
+								data: {
+									shoppingUserId: localStorage.getItem('userid'),
+									goodsUser: id
+								},
+								dataType: 'json',
+								success: function(res) {
+									mui.alert('收藏成功', '提示')
+									that.myajax()
+									that.collectid = res.data
+								}
+							});
+						} else {
+							mui.openWindow({
+								url: '../login/login.html',
+								id: 'login'
+							})
+						}
+
+					},
+					nocollect: function() {
+						if(localStorage.getItem('userid')) {
+							var that = this
+							$.ajax({
+								type: "post",
+								url: myUrl + "/deleteByGoodsSaveByShoppingUserId",
+								async: true,
+								dataType: 'json',
+								data: {
+									shoppingUserId: localStorage.getItem('userid'),
+									goodsUser: that.shopData[1][0].id
+								},
+								success: function(res) {
+									mui.alert('取消成功', '提示')
+									that.myajax()
+								}
+							});
+						} else {
+							mui.openWindow({
+								url: '../login/login.html',
+								id: 'login'
+							})
+						}
+					},
+					kefu: function() {
+						mui.openWindow({
+							url: 'qq.html',
+							id: 'qq'
+						})
+					}
+				},
+				mounted: function() {
+					this.myajax()
+					this.mymold()
+					var that = this
+
+					function plusReady() {
+						// 获取支付通道
+						plus.payment.getChannels(function(channels) {
+							for(var i in channels) {
+								if(channels[i].id == "wxpay") {
+									that.wxChannel = channels[i]
+
+								} else {
+									that.aliChannel = channels[i]
+								}
+							}
+						}, function(e) {
+							alert("获取支付通道失败" + e.message);
+						});
+					}
+					if(window.plus) {
+						plusReady();
+					} else {
+						document.addEventListener('plusready', plusReady, false);
+					}
+				},
+				filters: {
+					imgUrl: function(value) {
+						return localStorage.getItem('myurlimg') + value
+					},
+					pjson: function(value) {
+						return value.parseJSON
+					},
+					four: function(value) {
+						return value.toFixed(2)
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

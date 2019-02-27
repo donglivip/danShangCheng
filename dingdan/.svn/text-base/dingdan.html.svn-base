@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script type="text/javascript" src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.min.js" ></script>
+		<link rel="stylesheet" href="dingdan.css" />
+		<link rel="stylesheet" href="../css/com.css" />
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav " id="com">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">我的订单</h1>
+		</header>
+		<div class="mui-content" id="app">
+				<div class="list" v-for="(val,index) in orderlist">
+					<div class="put_div">
+						<div class="div_img">
+				    		<img :src="val.imgAddress | imgUrl"/>
+					   </div>
+					    <div class="div_tie">
+					    	<div class="h4_class">
+					    		<h4>{{val.name}}</h4>
+					    	</div>
+					    	<div class="button_class">
+					    		<button v-show="val.isPay==1" @click="updateById(val.id)">确认收货</button>
+					    	</div>
+					    	<div class="class_span">
+					    		<span>{{val.color}}</span>&nbsp;
+					    		<span v-show="val.isMail==1">包邮</span>
+					    		<span v-show="val.isMail==2">不包邮</span>
+					    		&nbsp;<span>其他参数</span>
+					    	</div>
+					    	<p>
+					    		<span style="color: #FF0000;border: 0px solid;">原价：{{val.price}}</span>&nbsp;
+					    		<span>数量：{{val.goodsNun}}运费：{{val.shipPrice}}</span>
+					    		<span style="margin-left: 20px;color: red;" v-show="val.isPay==1">已付款</span>
+					    		<span style="margin-left: 20px;color: red;" v-show="val.isPay==2" @click="pay(val.id,val.price)">点我付款</span>
+					    	</p>
+					    </div>
+					</div>
+					 <div class="div_buttom">
+					    	
+					    	<div class="buttom_a" @click="kefu">
+					    		联系客服
+					    	</div>
+					    	<div class="buttom_c" style="height:31px;">	
+					    	</div>
+					    	<div class="buttom_b" @click="logistics(val.express_number)">
+					    		物流查询
+					    	</div>	
+					</div>
+				</div>
+				<div v-show="orderlist==undefined" class="gmai" @click="gmai">
+					您还没有买过东西呢,快去首页看看吧
+				</div>	
+		</div>
+		<script type="text/javascript">
+			var myurl=localStorage.getItem('myurl')
+			var userid=localStorage.getItem('userid')
+			console.log(userid)
+			var myvue=new Vue({
+				el:'#app',
+				data:{
+					orderlist:[]
+				},
+				mounted:function(){
+					this.myajax()
+				},
+				methods:{
+					pay:function(id,money){
+						$.ajax({
+							type:"post",
+							url:myurl+"/unpaidAliPay",
+							async:false,
+							data:{
+								orderId:id
+							},
+							dataType:'json',
+							success:function(res){
+								localStorage.setItem('ordertext',res[0])
+								localStorage.setItem('allmoney',money)
+							}
+						});
+						mui.openWindow({
+							url:'payment.html',
+							id:'payment'
+						})
+						
+					},
+					logistics:function(orderid){
+						console.log(orderid)
+						if(orderid==undefined){
+							mui.alert('暂无物流信息，请耐心等候','提示')
+						}else{
+							mui.alert('您的物流单号为:'+orderid+'','提示')
+						}
+					},
+					myajax:function(){
+						var that=this
+						$.ajax({
+							type:"post",
+							url:myurl+"/queryOrderByShoppingUserId",
+							async:false,
+							data:{
+								shoppingUserId:userid
+							},
+							dataType:'json',
+							success:function(res){
+								that.orderlist=res.data
+								console.log(that.orderlist)
+							}
+						});
+					},
+					gmai:function(){
+						mui.openWindow({
+							url:'../shouye/shouye.html',
+							id:'shouye'
+						})
+					},
+					updateById:function(orderid){
+						var that=this
+						$.ajax({
+							type:"post",
+							url:myurl+"/updateById",
+							async:false,
+							data:{
+								id:orderid
+							},
+							dataType:'json',
+							success:function(res){
+								mui.alert('收货成功','状态')
+								that.myajax()
+							},
+							error:function(){
+								mui.alert('收货失败,请稍后重试!!','状态')
+							}
+						});
+					},
+					kefu:function(){
+						window.location.href = 'http://wpa.qq.com/msgrd?v=3&uin=1342645386&site=qq&menu=yes'
+					}
+				},
+				filters:{
+					imgUrl: function(value) {
+						return localStorage.getItem('myurlimg') + value.substr(value.indexOf('Shoppings'))
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="shouye.css" />
+		<link rel="stylesheet" href="iconfont.css" />
+		<script type="text/javascript" src="../js/jquery.min.js"></script>
+		<script src="../js/jquery.easyui.min.js"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<div class="mui-input-row">
+				<input id="test" type="text" class="mui-input-clear" placeholder="请输入商品关键词">
+			</div>
+		</header>
+		<!--分类备注：图标的图片，后台用户自己设置上传，图标的规格标注在后台-->
+		<div class="mui-content" id="app">
+			<div id="slider" class="mui-slider">
+				<div class="mui-slider-group mui-slider-loop">
+					<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img :src="slideimg[0].imgAddress | imgUrl">
+						</a>
+					</div>
+					<!-- 第一张 -->
+					<div class="mui-slider-item" v-for="item in slideimg">
+						<a href="#">
+							<img :src="item.imgAddress | imgUrl">
+						</a>
+					</div>
+					<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img :src="slideimg[0].imgAddress | imgUrl">
+						</a>
+					</div>
+				</div>
+				<div class="mui-slider-indicator">
+					<div class="mui-indicator" v-for="(value,index) in slideimg" :class="index==0?'mui-active':''"></div>
+				</div>
+			</div>
+			<div class="mui-content">
+				<div id="slider" class="mui-slider">
+					<div class="hong-men">
+						<ul class="mui-table-view mui-grid-view mui-grid-9">
+							<li class="mui-table-view-cell mui-media mui-col-sm-3" v-for="(val,index) in navitem" :id="val.id" @click="openList">
+								<span class="mui-icon">
+											<img :src="val.imgAddress | imgUrl" style="width: 60px;height: 60px;border-radius: 50%;"/>
+										</span>
+								<div class="mui-media-body">
+									{{val.name}}
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div style="height:55px;"></div>
+			<nav class="dl-bar">
+				<div class="dlitem" @click="openNew('shouye')">
+						<span class="mui-icon mui-icon-home"></span>
+						<span class="dllabel">首页</span>
+					</div>
+					<div class="dlitem" @click="openNew('gouwuche')">
+						<span class="mui-icon"><img src="../img/gwu.png" style="width: 17px;"/></span>
+						<span class="dllabel">购物车</span>
+					</div>
+					<div class="dlitem"  @click="openNew('wode')">
+						<span class="mui-icon iconfont icon-wode"></span>
+						<span class="dllabel">我的</span>
+					</div>
+					<div class="dlitem" @click="toqq">
+						<span class="mui-icon mui-icon-qq"></span>
+						<span class="dllabel">QQ客服</span>
+					</div>
+			</nav>
+			<script type="text/javascript">
+				//		存入网址
+				localStorage.setItem('myurl', 'http://106.14.149.248/Shoppings')
+				var myurl = localStorage.getItem('myurl')
+				var myvue = new Vue({
+					el: '#app',
+					data: {
+						slideimg: [],
+						navitem: [],
+						moreboo: true
+					},
+					methods: {
+						openNew: function(openUrl) {
+								if(openUrl == 'wode') {
+									if(localStorage.getItem('userid')) {
+										mui.openWindow({
+											url: '../' + openUrl + '/' + openUrl + '.html',
+											id: openUrl
+										})
+									} else {
+										mui.openWindow({
+											url: '../login/login.html',
+											id: 'login'
+										})
+									}
+								} else {
+									mui.openWindow({
+										url: '../' + openUrl + '/' + openUrl + '.html',
+										id: openUrl
+									})
+								}
+
+							},
+						toqq: function() {
+							window.location.href = 'http://wpa.qq.com/msgrd?v=3&uin=1342645386&site=qq&menu=yes'
+						},
+						openList:function(e){
+							mui.openWindow({
+								url:'../fenlei/fenlei.html',
+								id:'fenlei'
+							})
+							localStorage.setItem('in-nav-id',e.path[2].id)
+						},
+					},
+					mounted: function() {
+						var that = this
+						$.ajax({
+							type: "post",
+							url: myurl + "/queryByIsShow",
+							dataType: 'json',
+							async: false,
+							success: function(res) {
+								that.slideimg = res.data
+							}
+						})
+						$.ajax({
+							type: "post",
+							url: myurl + "/queryGoodsSortOne",
+							dataType: 'json',
+							async: false,
+							success: function(res) {
+								that.navitem = res.data
+								console.log(that.navitem)
+							}
+						})
+						mui.init()
+					},
+					filters: {
+						imgUrl: function(value) {
+							return localStorage.getItem('myurlimg')+value.substr(value.indexOf('Shoppings'))
+						}
+					}
+				})
+			</script>
+	</body>
+
+</html>

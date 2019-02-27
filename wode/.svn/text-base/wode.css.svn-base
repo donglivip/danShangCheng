@@ -1,0 +1,120 @@
+.div_img{
+	text-align: center;
+}
+.add{
+	width: 50%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background: #FB1647;
+    border-radius: 10px;
+    margin: 20px auto;
+}
+
+
+
+.div_img img{
+	width: 100px;
+	height: 100px;
+	/*图片变成圆形*/
+	border-radius:100%;
+	margin-top: 30px;
+	
+	
+}
+
+
+.div_img h4{
+	padding: 10px 10px;
+	font-weight:600;
+}
+
+.div_img h3{
+	
+	font-weight:600;
+}
+
+
+
+
+/*图标*/
+
+.div-b{
+	/*border: 1px solid red;*/
+	background: #FFFFFF;
+	overflow: hidden;
+	text-align: center;
+	padding: 5px 5px;
+}
+.div-b p{
+	font-size: 12px;
+}
+
+.div-b span{
+	font-size: 25px;
+}
+
+/*图标样式*/
+.div-b-a{
+	/*background: red;*/
+	width: 33.33%;
+	padding:10px 10px 10px 10px;
+	float: left;
+	
+	
+}
+
+
+/*收藏*/
+.tu_q{
+	color: #FF5053;
+}
+/*消息*/
+.tu_e{
+	color: #d8d8d8;
+}
+/*设置*/
+.tu_r{
+	color: #0062CC;
+}
+/*活动*/
+.tu_t{
+	color: #FF0000;
+}
+/*意见反馈*/
+.tu_y{
+	color: #F0AD4E;
+}
+/*客服*/
+.tu_u{
+	color: #007AFF;
+}
+/*粉丝*/
+
+.tu_a{
+	color: #FF5053;
+}
+/*发文章*/
+.tu_b{
+	color: #FF5053;
+}
+
+
+.div_ul ul li span{
+	margin: 5px;
+	font-size: 12px;
+}
+
+
+.inf{
+	/*border: 1px solid red;*/
+	font-size: 12px;
+	margin-bottom: 30px;
+}
+
+.info{
+	font-size: 12px;
+}
+.nologin{width:50%;height: 30px;display: flex;justify-content: center;align-items: center;color: white;background:#FB1647;border-radius: 5px;margin: 10px auto;}

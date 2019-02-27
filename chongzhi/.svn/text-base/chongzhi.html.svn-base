@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="chongzhi.css" />
+		<link rel="stylesheet" href="../css/com.css" />
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" id="com">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">会员充值</h1>
+		</header>
+		<div class="mui-content" id="app">
+			<!--普通会员代码-->
+			<div class="padding-nei-aa" style="display:block;">
+				<ul class="mui-table-view mui-table-view-radio">
+					<li class="mui-table-view-cell " v-for="(val,index) in vipList" :class="index==0?'mui-selected':''" @click="changemoney(val.price,val.gradeName,val.id,val.timeLimit)">
+						<a class="mui-navigate-right">
+							<span class="span-vip">{{val.gradeName}}</span><span class="vip-rmb">￥{{val.price}}元</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="vip-huafei">
+				<p>需要花费<span>￥{{money}}</span></p>
+			</div>
+			<!--支付按钮-->
+			<div class="vip-zhifu" id="dcontent">
+				<button @click="pay">
+						支付
+					</button>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			var myurl = localStorage.getItem('myurl')
+			var myvue = new Vue({
+				el: '#app',
+				data: {
+					vipList: [],
+					money: 0,
+					name: '',
+					id: '',
+					timeLimit: 1
+				},
+				mounted: function() {
+					var that = this
+					$.ajax({
+						type: "post",
+						url: myurl + "/queryMember",
+						async: false,
+						dataType: 'json',
+						success: function(res) {
+							that.vipList = res.data
+							that.money = res.data[0].price
+							that.id = res.data[0].id
+							that.timeLimit = res.data[0].timeLimit
+							that.name = res.data[0].gradeName
+							console.log(res)
+						},error:function(res){
+							console.log(res)
+						}
+					});
+					// 1. 获取支付通道
+					function plusReady() {
+						// 获取支付通道
+						plus.payment.getChannels(function(channels) {
+							that.channel = channels[0];
+						}, function(e) {
+							alert("获取支付通道失败：" + e.message);
+						});
+					}
+					if(window.plus) {
+						plusReady();
+					} else {
+						document.addEventListener('plusready', plusReady, false);
+					}
+				},
+				methods: {
+					changemoney: function(mon, name, id, timeLimit) {
+						this.money = mon
+						this.name = name
+						this.id = id
+						this.timeLimit = timeLimit
+					},
+					pay: function() {
+						var that = this
+						var ALIPAYSERVER = myurl+'/MemberCreateAliPay?menberLevel=' + that.name + '&shoppingUserId=' + localStorage.getItem('userid') + '&memberId=' + that.id + '&price=' + that.money + '&timeLimit=' + that.timeLimit;
+						var xhr = new XMLHttpRequest();
+						xhr.onreadystatechange = function() {
+							switch(xhr.readyState) {
+								case 4:
+									if(xhr.status == 200) {
+										plus.payment.request(that.channel, xhr.responseText, function(result) {
+											plus.nativeUI.alert("支付成功！", function() {
+												mui.openWindow({
+													url: 'payment.html',
+													id: 'payment'
+												})
+											});
+										}, function(error) {
+											plus.nativeUI.alert("支付失败：" + error.code);
+										});
+									} else {
+										alert("获取订单信息失败！");
+									}
+									break;
+								default:
+									break;
+							}
+						}
+						xhr.open('POST', ALIPAYSERVER);
+						xhr.send();
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

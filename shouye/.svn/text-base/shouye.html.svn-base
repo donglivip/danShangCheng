@@ -1,0 +1,310 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="shouye.css" />
+		<link rel="stylesheet" href="iconfont.css" />
+		<script type="text/javascript" src="../js/jquery.min.js"></script>
+		<script src="../js/jquery.easyui.min.js"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	</head>
+	<body>
+		<div  id="app">
+		<header class="mui-bar mui-bar-nav">
+			<div class="mui-input-row">
+				<input id="test" type="text" placeholder="请输入商品关键词" style="color: #666666;">
+				<div id="searchdl" @click="search">
+					GO
+				</div>
+			</div>
+		</header>
+		<!--分类备注：图标的图片，后台用户自己设置上传，图标的规格标注在后台-->
+		<div class="mui-content">
+			<div id="slider" class="mui-slider" v-if="slideimg">
+				<div class="mui-slider-group mui-slider-loop">
+					<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img :src="slideimg[0].imgAddress | imgUrl">
+						</a>
+					</div>
+					<!-- 第一张 -->
+					<div class="mui-slider-item" v-for="item in slideimg">
+						<a href="#">
+							<img :src="item.imgAddress | imgUrl">
+						</a>
+					</div>
+					<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img :src="slideimg[0].imgAddress | imgUrl">
+						</a>
+					</div>
+				</div>
+				<div class="mui-slider-indicator">
+					<div class="mui-indicator" v-for="(value,index) in slideimg" :class="index==0?'mui-active':''"></div>
+				</div>
+			</div>
+			<div class="mui-content">
+				<div id="slider" class="mui-slider">
+					<div class="hong-men">
+						<ul class="mui-table-view mui-grid-view mui-grid-9">
+							<li class="mui-table-view-cell mui-media mui-col-sm-3" v-for="(val,index) in navitem" v-show="index<7" @click="openList(val.id)">
+								<!--<span class="mui-icon">-->
+											<img :src="val.imgAddress | imgUrl" style="width: 70px;height: 70px;border-radius: 50%;"/>
+										<!--</span>-->
+								<div class="mui-media-body">
+									{{val.name}}
+								</div>
+							</li>
+							<li class="mui-table-view-cell mui-media mui-col-sm-3" @click="openMore" v-show="navitem.length>7">
+								<span class="mui-icon"></span>
+								<div class="mui-media-body">
+									更多
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="class_piank">
+						<div class="button_aaa">
+							<div class="class_button">
+								最新上架
+							</div>
+						</div>
+						<!--商品列表-->
+						<div class="list">
+							<div class="itml_div" v-for="(val,index) in shopAll" v-show="index<11" @click="openDetail(val.id)">
+								<div class="itml_div_l">
+									<img :src="val.imgAddress | imgUrl" />
+								</div>
+								<div class="h4">
+									<span>
+									{{val.name}}
+								</span>
+								</div>
+
+								<div class="jiage">
+									<p>￥<span>{{val.price}}</span><span style="float: right;"><span>{{val.sellGoodsNum}}</span>人购买</span>
+									</p>
+								</div>
+								<div style="clear: both;"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="height:55px;"></div>
+				<nav class="dl-bar">
+					<div class="dlitem" @click="openNew('shouye')">
+						<span class="mui-icon mui-icon-home"></span>
+						<span class="dllabel">首页</span>
+					</div>
+					<div class="dlitem" @click="openguo">
+						<span class="mui-icon"><img src="../img/gwu.png" style="width: 17px;"/></span>
+						<span class="dllabel">购物车</span>
+					</div>
+					<div class="dlitem"  @click="openwo()">
+						<span class="mui-icon iconfont icon-wode"></span>
+						<span class="dllabel">我的</span>
+					</div>
+					<div class="dlitem" @click="toqq">
+						<span class="mui-icon mui-icon-qq"></span>
+						<span class="dllabel">QQ客服</span>
+					</div>
+				</nav>
+				<script type="text/javascript">
+					//		存入网址
+					localStorage.setItem('myurl', 'http://120.79.2.60/Shoppings')
+					localStorage.setItem('myurlimg', 'http://120.79.2.60/')
+					var myurl = localStorage.getItem('myurl')
+					var myvue = new Vue({
+						el: '#app',
+						data: {
+							slideimg: [],
+							navitem: [],
+							moreboo: true,
+							shopAll: []
+						},
+						methods: {
+							search:function(){
+								var val=$('#test').val()
+								localStorage.setItem('searchval',val)
+								mui.openWindow({
+									url:'../shangpin/shangpin002.html',
+									id:'shangpin'
+								})
+							},
+							openguo:function(){
+								if(localStorage.getItem('userid')!=null) {
+										mui.openWindow({
+											url:'../gouwuche/gouwuche.html',
+											id: 'gouwuche'
+										})
+									} else {
+										mui.openWindow({
+											url: '../login/login.html',
+											id: 'login'
+										})
+									}
+							},
+							openNew: function(openUrl) {
+									mui.openWindow({
+										url: '../' + openUrl + '/' + openUrl + '.html',
+										id: openUrl
+									})
+							},
+							openwo:function(){
+								if(localStorage.getItem('userid')!=null) {
+										mui.openWindow({
+											url:'../wode/wode.html',
+											id: 'wode'
+										})
+									} else {
+										mui.openWindow({
+											url: '../login/login.html',
+											id: 'login'
+										})
+									}
+							},
+							toqq: function() {
+								mui.openWindow({
+									url:'../xiangqing/qq.html',
+									id:'qq'
+								})
+							},
+							openList: function(id) {
+								mui.openWindow({
+									url: '../fenlei/fenlei.html',
+									id: 'fenlei'
+								})
+								localStorage.setItem('in-nav-id',id)
+							},
+							openMore: function() {
+								mui.openWindow({
+									url: 'listAll.html',
+									id: 'listAll'
+								})
+							},
+							openDetail:function(id){
+								localStorage.setItem('index-detail',id)
+								mui.openWindow({
+									url:'../xiangqing/xiangqing002.html'
+								})
+							}
+						},
+						created:function(){
+							function plusReady(){  
+								// 弹出系统等待对话框  
+								plus.nativeUI.showWaiting( "加载中..." );
+							}  
+							if(window.plus){  
+							plusReady();  
+							}else{  
+							document.addEventListener("plusready",plusReady,false);  
+							}  
+						},
+						mounted: function() {
+							
+							var that = this
+							$.ajax({
+								type: "post",
+								url: myurl + "/queryByIsShow",
+								dataType: 'json',
+								async: true,
+								success: function(res) {
+									that.slideimg = res.data
+								}
+							})
+							$.ajax({
+								type: "post",
+								url: myurl + "/queryGoodsSortOne",
+								dataType: 'json',
+								async: true,
+								success: function(res) {
+									that.navitem = res.data
+								}
+							})
+							$.ajax({
+								type: "post",
+								url: myurl + "/queryAll",
+								dataType: 'json',
+								async: true,
+								success: function(res) {
+									that.shopAll = res.data
+									function plusReady(){  
+										plus.nativeUI.closeWaiting();
+									}  
+									if(window.plus){  
+									plusReady();  
+									}else{  
+									document.addEventListener("plusready",plusReady,false);  
+									}  
+								}
+							})
+							mui.init()
+//							var wgtVer=null;
+////							获取当前应用版本
+//							function plusReady(){
+//							    plus.runtime.getProperty(plus.runtime.appid,function(inf){
+//							        wgtVer=inf.version;
+//							        $.ajax({
+//										type: "post",
+//										url: myurl + "/queryAll",
+//										dataType: 'json',
+//										async: true,
+//										success: function(res) {
+//											if(res!=wgtVer){
+//												downWgt()
+//											}
+//										}
+//									})
+//							    });
+//							}
+//							if(window.plus){
+//							    plusReady();
+//							}else{
+//							    document.addEventListener('plusready',plusReady,false);
+//							}
+//							// 下载wgt文件
+//							var wgtUrl="http://demo.dcloud.net.cn/test/update/H5EF3C469.wgt";
+//							function downWgt(){
+//							    plus.nativeUI.showWaiting("检测到版本更新正在下载更新包...");
+//							    plus.downloader.createDownload( wgtUrl, {filename:"_doc/update/"}, function(d,status){
+//							        if ( status == 200 ) { 
+//							            installWgt(d.filename); // 安装wgt包
+//							        } else {
+//							            plus.nativeUI.alert("下载wgt失败！");
+//							        }
+//							        plus.nativeUI.closeWaiting();
+//							    }).start();
+//							}
+//							// 更新应用资源
+//							function installWgt(path){
+//							    plus.nativeUI.showWaiting("安装wgt文件...");
+//							    plus.runtime.install(path,{},function(){
+//							        plus.nativeUI.closeWaiting();
+//							        plus.nativeUI.alert("应用资源更新完成！",function(){
+//							            plus.runtime.restart();
+//							        });
+//							    },function(e){
+//							        plus.nativeUI.closeWaiting();
+//							        plus.nativeUI.alert("安装wgt文件失败["+e.code+"]："+e.message);
+//							    });
+//							}
+						},
+						filters: {
+							imgUrl: function(value) {
+								return 'http://120.79.2.60/'+value.substr(value.indexOf('Shoppings'))
+							}
+						}
+					})
+				</script>
+			</div>
+	</body>
+
+</html>

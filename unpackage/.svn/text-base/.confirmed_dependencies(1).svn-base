@@ -1,0 +1,146 @@
+{
+  "child/child.html": {
+    "resources": [
+      "fonts/mui.ttf",
+      "css/iconfont.css",
+      "child/child.js",
+      "shouye/shouye.html",
+      "child/child.css",
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "js/dui.js",
+      "css/iconfont.ttf"
+    ],
+    "refer": [
+      "xiaoxi/xiaoxi.html",
+      "wode/wode.html",
+      "shouye/shouye.html",
+      "login/login.html"
+    ]
+  },
+  "index.html": {
+    "resources": [
+      "js/castapp.js",
+      "img/3.png",
+      "img/1234.png",
+      "js/mui.min.js",
+      "css/inde.css",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "child/child.html"
+    ]
+  },
+  "xiaoxi/xiaoxi.html": {
+    "resources": [
+      "xiaoxi/xiaoxi.css",
+      "css/com.css"
+    ]
+  },
+  "wode/wode.html": {
+    "resources": [
+      "wode/wode.css",
+      "img/img.png",
+      "wode/iconfont.css",
+      "wode/comcon.css",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "wode/wode.js"
+    ]
+  },
+  "shouye/shouye.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "fonts/mui.ttf",
+      "shouye/shouye.css",
+      "css/iconfont.css",
+      "shouye/shouye.js",
+      "js/dui.js",
+      "shouye/iconfont.ttf",
+      "shouye/iconfont.css",
+      "img/789798.png"
+    ],
+    "refer": [
+      "fenlei/fenlei.html",
+      "xiangqing/xiangqing.html"
+    ]
+  },
+  "fenlei/fenlei.html": {
+    "resources": [
+      "fenlei/fenlei.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/dui.js"
+    ],
+    "refer": [
+      "erjifenlei/erjifenlei.html"
+    ]
+  },
+  "erjifenlei/erjifenlei.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "erjifenlei/erjifenlei.js",
+      "js/dui.js"
+    ],
+    "refer": [
+      "shangpin/shangpin.html"
+    ]
+  },
+  "shangpin/shangpin.html": {
+    "resources": [
+      "shangpin/shangpin.css",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "shangpin/shangpin.js",
+      "js/dui.js",
+      "img/789798.png",
+      "css/com.css"
+    ],
+    "refer": [
+      "xiangqing/xiangqing.html"
+    ]
+  },
+  "xiangqing/xiangqing.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "xiangqing/xiangqing.js",
+      "css/iconfont.css",
+      "xiangqing/xiangqing.css",
+      "js/dui.js",
+      "shouye/iconfont.css",
+      "shouye/iconfont.woff"
+    ],
+    "refer": [
+      "gouwuche/gouwuche.html"
+    ]
+  },
+  "gouwuche/gouwuche.html": {
+    "resources": [
+      "gouwuche/gouwuche.css",
+      "gouwuche/common.css",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/dui.js"
+    ]
+  },
+  "login/login.html": {
+    "resources": [
+      "login/login.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/dui.js",
+      "login/login.css",
+      "css/com.css"
+    ]
+  }
+}

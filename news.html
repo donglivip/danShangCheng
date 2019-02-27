@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="js/rem.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="css/news.css"/>
+	</head>
+
+	<body>
+		<div id="app">
+			<div class="header">
+				新闻
+			</div>
+			<div class="main">
+				<div class="news-group">
+					<div class="title">
+						进口冷冻小青龙虾 新鲜海鲜活冰冻花龙虾仔
+					</div>
+					<div class="img-box">
+						<img src="dingdan/photo.png"/>
+					</div>
+				</div>
+			</div>
+			<nav class="dl-bar">
+				<div class="dlitem">
+					<span class="mui-icon">
+							<img src="./img/shouye-2.png"/>
+							</span>
+					<span class="dllabel">首页</span>
+				</div>
+				<div class="dlitem" @click="openguo">
+					<span class="mui-icon">
+								<img src="img/xinwen-active.png"/>
+							</span>
+					<span class="dllabel active">新闻</span>
+				</div>
+				<div class="dlitem" @click="">
+					<span class="mui-icon">
+								<img src="img/shangpin-2.png"/>
+							</span>
+					<span class="dllabel">商品</span>
+				</div>
+				<div class="dlitem" @click="openwo()">
+					<span class="mui-icon">
+								<img src="img/ziyuan copy.png"/>
+							</span>
+					<span class="dllabel">我的</span>
+				</div>
+			</nav>
+		</div>
+	</body>
+
+</html>

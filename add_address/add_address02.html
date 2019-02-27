@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="../css/com.css" />
+		<link rel="stylesheet" href="../add_addressDF/Add_address.css" />
+		<link rel="stylesheet" href="../add_addressDF/cssxuanz/app.css" />
+		<link rel="stylesheet" href="../add_addressDF/cssxuanz/index.css" />
+		<link rel="stylesheet" href="../add_addressDF/cssxuanz/mui.picker.css" />
+		<link rel="stylesheet" type="text/css" href="../add_addressDF/cssxuanz/mui.poppicker.css"/>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	</head>
+
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav" id="nav_bg">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title" id="title">修改收货地址</h1>
+			</header>
+
+			<div class="mui-content">
+				<ul class="mui-table-view">
+
+					<li class="mui-table-view-cell">
+						<label>代发货人</label>
+						<input type="text" v-model="name" />
+					</li>
+
+					<li class="mui-table-view-cell">
+						<label>手机号码</label>
+						<input type="number" v-model="phone" />
+					</li>
+
+					<li class="mui-table-view-cell">
+						<label class="view">代发货地址</label>
+						<button id='showCityPicker3' class="mui-btn mui-btn-block" type='text'></button>
+						<div id='cityResult3' class="ui-alert"></div>
+					</li>
+
+					<li class="mui-table-view-cell">
+						<label>详细地址</label>
+						<input type="text" v-model="detail" />
+					</li>
+				</ul>
+			</div>
+			<div class="button">
+				<button id="button" @click="mysubmit">提&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;交</button>
+
+			</div>
+		</div>
+		<script src="../add_addressDF/xuanze/city.data-3.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../add_addressDF/xuanze/city.data.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../add_addressDF/xuanze/mui.picker.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../add_addressDF/xuanze/mui.poppicker.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			//三级选择器
+
+			(function($, doc) {
+				$.init();
+				$.ready(function() {
+					/**
+					 * 获取对象属性的值
+					 * 主要用于过滤三级联动中，可能出现的最低级的数据不存在的情况，实际开发中需要注意这一点；
+					 * @param {Object} obj 对象
+					 * @param {String} param 属性名
+					 */
+					var _getParam = function(obj, param) {
+						return obj[param] || '';
+					};
+
+					var cityPicker3 = new $.PopPicker({
+						layer: 3
+					});
+					cityPicker3.setData(cityData3);
+					var showCityPickerButton = doc.getElementById('showCityPicker3');
+					var cityResult3 = doc.getElementById('cityResult3');
+					showCityPickerButton.addEventListener('tap', function(event) {
+						cityPicker3.show(function(items) {
+							showCityPicker3.innerText = "" + _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+							muvue.province = _getParam(items[0], 'text')
+							muvue.city = _getParam(items[1], 'text')
+							muvue.darea = _getParam(items[2], 'text')
+						});
+					}, false);
+				});
+
+			})(mui, document);
+			var myurl = localStorage.getItem('myurl')
+			var addressid = localStorage.getItem('address02-id')
+			showCityPicker3.innerText = "" + localStorage.getItem('address02-province') + " " + localStorage.getItem('address02-city') + " " + localStorage.getItem('address02-area');
+			var muvue = new Vue({
+				el: '#app',
+				data: {
+					name: localStorage.getItem('address02-name'),
+					phone: localStorage.getItem('address02-phone'),
+					province: '',
+					city: '',
+					area: '',
+					detail: localStorage.getItem('address02-detail')
+				},
+				methods: {
+					mysubmit: function() {
+						if(!(/^1[3|4|5|8|7][0-9]\d{4,8}$/.test(this.phone))) {
+							alert("不是完整的11位手机号或者正确的手机号前七位");
+						} else {
+							var that = this
+							$.ajax({
+								type: "post",
+								url: myurl + "/updateAddressById",
+								async: false,
+								data: {
+									id: addressid,
+									province: that.province,
+									city: that.city,
+									area: that.area,
+									phone: that.phone,
+									name: that.name,
+									detail: that.detail
+								},
+								success: function() {
+									mui.openWindow({
+										url: '../shouhuodizhi/shouhuodizhi.html',
+										id: 'shouhuodizhi'
+									})
+								},
+								error: function() {
+									mui.toast('修改失败')
+								}
+							});
+						}
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

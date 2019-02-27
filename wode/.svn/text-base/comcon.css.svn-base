@@ -1,0 +1,23 @@
+/*公共目录样式*/
+/*顶部导航*/
+.comcon{
+	/*背景色*/
+	background: red;
+}
+
+.comcon a,.comcon h1{
+	/*文字颜色*/
+	color: #FFFFFF;
+}
+
+/*公共按钮*/
+.button {
+	text-align: center;
+	margin-top: 25px;
+}
+
+.button button{
+	width: 80%;
+	height: 45px;
+	background: #FFFFFF;
+}

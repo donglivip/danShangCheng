@@ -1,0 +1,227 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<link rel="stylesheet" href="xiangqing.css" />
+		<link rel="stylesheet" href="../shouye/iconfont.css" />
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	</head>
+
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title">商品详情</h1>
+				<div class="mui-pull-right mui-icon mui-icon-upload" @click="share"></div>
+			</header>
+			<div class="mui-content">
+				<!--头部样式和标题-->
+				<div class="xingqing_a">
+					<!--轮播图3张-->
+					<img class="info" id="img" :src="shopData[1][0].imgAddress | imgUrl" />
+					<div class="jiage" v-for="(val,index) in shopData[2]">
+						<p>{{val.gradeName}}价格￥<span id="pric">{{shopData[1][0].price*(val.rebate/10) | four}}</span>&nbsp;<s style="margin-right: 5px;" id="price_a_b">￥{{shopData[1][0].price}}</s><span style="float: right;"><span>{{shopData[0]}}</span>人购买</span>
+						</p>
+					</div>
+					<div class="h444">
+							{{shopData[1][0].name}}
+					</div>
+				</div>
+				<div class="listt">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell ">
+							<a class="mui-navigate-right">
+								<div v-show="shopData[1][0].isMail==1">包邮</div>
+								<div v-show="shopData[1][0].isMail==2">不包邮</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell dlcell">
+							<div v-for="(val,index) in shopData[1][0].color.split(',')" :class="colornav==index?'color-ctive':''" @click="colorfun(val,index)">
+								{{val}}
+							</div>
+						</li>
+					</ul>
+				</div>
+				<!--商品详情-->
+				<div class="xingqing_b">
+					<span class="public-zh-sapn">商品详情</span>
+					<div id="conten" v-html="shopData[1][0].details">
+
+					</div>
+				</div>
+			</div>
+			<div style="margin-bottom: 50px;"></div>
+			<!--购买框-->
+			<div class="xiangqing_c">
+				<div class="xiangqing_c_l">
+					<div class="span_r" id="btn" @click="jsonshop(shopData[1][0].id,'0')">
+						<span class="span_r_a" id="crcc">￥{{shopData[1][0].price}}</span>
+					</div>
+				</div>
+				<div class="xiangqing_c_r">
+					<span class="iconfont icon-shoucang" @click="collect(shopData[1][0].id)" v-show="iscollect==0"></span>
+	    			<span class="iconfont" @click="nocollect()" v-show="iscollect==1"><img src="collect.png"/></span>
+					<span class="gwuche" @click="jsonshop(shopData[1][0].id)"><img src="gwu.png"/></span>
+					<span class="iconfont icon-kefu" id="kefu" @click="kefu"></span>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var myUrl = localStorage.getItem('myurl')
+			var twonavid = localStorage.getItem('twonavid')
+			var shopid = localStorage.getItem('shop-detail-id')
+			var vip = localStorage.getItem('vipgrade')
+			var myvue = new Vue({
+				el: '#app',
+				data: {
+					shopData: [],
+					colornav: -1,
+					color: '',
+					iscollect:0,
+					collectid:''
+				},
+				methods: {
+					share: function() {
+						mui.openWindow({
+							url: 'index.html',
+							id: 'share'
+						})
+					},
+					colorfun: function(val, index) {
+						this.colornav = index
+						this.color = val
+					},
+					jsonshop: function(shopid, open) {
+						if(localStorage.getItem('userid')) {
+						var that = this
+						if(that.colornav == -1) {
+							mui.alert('请选择商品分类', '提示')
+						} else {
+							$.ajax({
+								type: "post",
+								url: myUrl + "/insertByShoppingUserIdAndGoodsId",
+								async: false,
+								data: {
+									goodsId: shopid,
+									shoppingUserId: localStorage.getItem('userid'),
+									goodsColor: that.color
+								},
+								dataType: 'json',
+								success: function(res) {
+									mui.alert('加入购物车成功', '提示')
+									console.log(res)
+								}
+							});
+							if(open == '0') {
+								mui.openWindow({
+									url: '../gouwuche/gouwuche.html',
+									id: 'gouwuche'
+								})
+							}
+						}
+						} else {
+							mui.openWindow({
+								url: '../login/login.html',
+								id: 'login'
+							})
+						}
+					},
+					myajax: function() {
+						var that = this
+						$.ajax({
+							type: "post",
+							url:myUrl+"/queryGoodsDetails",
+							async: false,
+							data: {
+								sellGoodsId: shopid,
+								goodsSortTwoId: twonavid,
+								shoppingUserId:localStorage.getItem('userid'),
+								goodsUser:shopid
+							},
+							dataType: 'json',
+							success: function(res) {
+								that.shopData = res.data
+								that.iscollect=res.data[3]
+							}
+						});
+					},
+					collect: function(id) {
+						if(localStorage.getItem('userid')) {
+							var that = this
+							$.ajax({
+								type: "post",
+								url: myUrl + "/insert",
+								async: false,
+								data: {
+									shoppingUserId: localStorage.getItem('userid'),
+									goodsUser: id
+								},
+								dataType: 'json',
+								success: function(res) {
+									console.log(localStorage.getItem('userid'))
+									console.log(res)
+									mui.alert('收藏成功', '提示')
+									that.myajax()
+								}
+							});
+						} else {
+							mui.openWindow({
+								url: '../login/login.html',
+								id: 'login'
+							})
+						}
+						
+					},
+					nocollect:function(){
+						if(localStorage.getItem('userid')) {
+							var that=this
+							$.ajax({
+								type:"post",
+								url:myUrl+"/deleteByGoodsSaveByShoppingUserId",
+								async:false,
+								dataType:'json',
+								data:{
+									shoppingUserId:localStorage.getItem('userid'),
+									goodsUser:that.shopData[1][0].id
+								},
+								success:function(res){
+									mui.alert('取消成功','提示')
+									that.myajax()
+								}
+							});
+						} else {
+							mui.openWindow({
+								url: '../login/login.html',
+								id: 'login'
+							})
+						}
+					},
+					kefu:function(){
+						mui.openWindow({
+							url:'qq.html',
+							id:'qq'
+						})
+					}
+				},
+				mounted: function() {
+					this.myajax()
+				},
+				filters: {
+					imgUrl: function(value) {
+						return localStorage.getItem('myurlimg')+ value.substr(value.indexOf('Shoppings'))
+					},
+							four:function(value){
+								return value.toFixed(2)
+							}
+				}
+			})
+		</script>
+	</body>
+
+</html>
